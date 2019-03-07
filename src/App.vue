@@ -1,14 +1,44 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <Navbar />
+    <div class="app-layout">
+      <AppMenu />
+      <router-view/>
     </div>
-    <router-view/>
   </div>
 </template>
 
+<script>
+import Navbar from '@/components/Navbar.vue'
+import AppMenu from '@/components/AppMenu.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Navbar,
+    AppMenu
+  }
+}
+</script>
+
+
 <style>
+*{
+  box-sizing: border-box;
+}
+*:focus{
+  outline: none;
+}
+
+a{
+  text-decoration: none;
+  color: inherit;
+}
+
+body{
+  margin: 0px;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -16,16 +46,9 @@
   text-align: center;
   color: #2c3e50;
 }
-#nav {
-  padding: 30px;
+
+.app-layout{
+  display: flex;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
