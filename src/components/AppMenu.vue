@@ -27,7 +27,7 @@ export default {
     height: calc(100vh - 60px);
     max-height: calc(100vh - 60px);
     width: 20vw;
-    min-width: 260px;
+    min-width: 240px;
     border-right: 1px solid rgba(0, 0, 0, 0.116);
     background: white;
     overflow: scroll;
