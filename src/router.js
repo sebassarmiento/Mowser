@@ -8,7 +8,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'feed',
+      component: Home
+    },
+    {
+      path: '/feed/:category',
+      name: 'feed',
       component: Home
     },
     {

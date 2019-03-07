@@ -34,6 +34,7 @@ export default {
     align-items: center;
     justify-content: flex-start;
     padding: 12px;
+    min-width: 260px;
 }
 .brand i{
     padding: 12px;

@@ -1,10 +1,7 @@
 <template>
   <div id="app">
     <Navbar />
-    <div class="app-layout">
-      <AppMenu />
-      <router-view/>
-    </div>
+    <router-view/>
   </div>
 </template>
 
@@ -15,8 +12,7 @@ import AppMenu from '@/components/AppMenu.vue'
 export default {
   name: 'App',
   components: {
-    Navbar,
-    AppMenu
+    Navbar
   }
 }
 </script>
@@ -45,10 +41,6 @@ body{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-.app-layout{
-  display: flex;
 }
 
 </style>

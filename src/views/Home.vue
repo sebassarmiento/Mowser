@@ -1,16 +1,28 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to Mowser"/>
+    <AppMenu />
+    <Feed />
   </div>
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
+import Feed from '@/components/Feed.vue'
+import AppMenu from '@/components/AppMenu.vue'
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
+    Feed,
+    AppMenu
   }
 }
+
 </script>
+
+<style scoped>
+
+.home{
+  display: flex;
+}
+
+</style>
