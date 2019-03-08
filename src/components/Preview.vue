@@ -1,6 +1,6 @@
 <template>
     <div v-if="currentPreview" class="preview">
-        <img v-bind:src="`https://image.tmdb.org/t/p/w1280/${currentPreview.backdrop_path}`" alt="">
+        <img v-bind:src="`https://image.tmdb.org/t/p/w1280/${currentPreview.poster_path}`" alt="">
         <div class="preview-info">
             <div class="rating" ><i class="fas fa-star"></i>{{currentPreview.vote_average}}</div>
             <h2>{{ currentPreview.title }}</h2>
@@ -24,7 +24,7 @@ export default {
 
 .preview{
     width: 20vw;
-    min-width: 300px;
+    min-width: 260px;
     height: calc(100vh - 60px);
     max-height: calc(100vh - 60px);
     overflow: scroll;
