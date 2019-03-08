@@ -1,12 +1,7 @@
 <template>
   <div class="feed">
-    <div v-if="movies" class="carousel">
-      <img v-bind:src="`https://image.tmdb.org/t/p/w1280/${movies[0].backdrop_path}`" alt="">
-      <div class="info">
-        <h2>{{ movies[0].title }}</h2>
-      </div>
-    </div>
-    <h1>Showing {{ $route.params.category }} </h1>
+    <FeedCarousel v-if="carousel" v-bind:movies="carousel" />
+    <h1>Now Playing</h1>
     <div class="feed-grid">
       <div class="movie-preview" v-for="(movie, index) in movies" v-bind:key="index" >
         <img v-on:click="loadPreview(index)" v-bind:src="`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`" alt="">
@@ -14,19 +9,29 @@
         <p>{{ timeAgo(movie.release_date) }}</p>
       </div>
     </div>
+    <div class="load-more">
+      <button v-on:click="loadMore" >Load more</button>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex'
 import moment from 'moment'
+import FeedCarousel from '@/components/FeedCarousel.vue'
 
 export default {
   name: 'Feed',
+  components: {
+    FeedCarousel
+  },
   data(){
     return {
       movies: null,
-      latest: null
+      latest: null,
+      url: null,
+      carousel: null,
+      page: 1
     }
   },
   methods: {
@@ -36,21 +41,36 @@ export default {
       this.ADD_CURRENT_PREVIEW(this.movies[i])
     },
 
+    loadMore(){
+      this.page++
+      fetch(`${this.url}&page=${this.page}`)
+      .then(d => d.json())
+      .then(res => {
+        this.movies = [...this.movies, ...res.results]
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    },
+
     timeAgo(date){
       let myDate = date.split('-')
       myDate = myDate.map(d => parseFloat(d))
-      console.log(moment(myDate).fromNow(), myDate)
+      // console.log(moment(myDate).fromNow(), myDate)
       return '1 month ago'
     }
 
   },
   mounted(){
-    let url = `${this.api_url}/movie/now_playing?api_key=${this.api_key}`
-    fetch(url)
+    this.url = `${this.api_url}/movie/now_playing?api_key=${this.api_key}`
+    fetch(this.url)
     .then(d => d.json())
     .then(res => {
       console.log(res)
       this.movies = res.results
+      let random = Math.floor(Math.random() * this.movies.length - 3)
+      this.carousel = [{...this.movies[random]}, {...this.movies[random + 1]}, {...this.movies[random + 2]}]
+      console.log(this.carousel)
     })
     .catch(err => console.log(err))
   },
@@ -62,26 +82,6 @@ export default {
 </script>
 
 <style scoped>
-.carousel{
-  padding: 0px;
-  width: 100%;
-  position: relative;
-  background: black;
-}
-.carousel img{
-  width: 100%;
-  margin: 0px;
-  opacity: 0.7;
-}
-.carousel .info{
-  background: red;
-  position: absolute;
-  top: 50%;
-  right: 12px;
-}
-.carousel h2{
-  color: white;
-}
 
 .feed{
   width: 100%;
@@ -132,6 +132,46 @@ export default {
   font-size: 0.8em;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.486);
+}
+
+.feed .load-more{
+  grid-column: 1 / -1;
+  margin: 0px auto;
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+}
+.feed .load-more button{
+  padding: 12px;
+  border-radius: 2px;
+  font-size: 0.9em;
+  font-weight: 500;
+  border: 1px solid #2c3e50;
+  position: relative;
+  z-index: 1;
+}
+.feed .load-more button::after{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #2c3e50;
+  border-radius: 20px;
+  transform: scale(0.8, 1);
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+  z-index: -1;
+}
+.load-more button:hover{
+  color: white;
+  cursor: pointer;
+}
+.load-more button:hover::after{
+  border-radius: 0px;
+  opacity: 1;
+  transform: scale(1);
 }
 
 </style>

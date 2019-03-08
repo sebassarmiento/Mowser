@@ -33,11 +33,13 @@ export default {
 }
 .preview img{
     width: 100%;
+    display: block;
 }
 
 .preview-info{
     padding: 12px;
     position: relative;
+    border-left: 1px solid rgba(0, 0, 0, 0.192);
 }
 .preview-info .rating{
     position: absolute;
