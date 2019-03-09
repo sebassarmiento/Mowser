@@ -1,18 +1,13 @@
 <template>
   <div class="feed">
     <FeedCarousel v-if="carousel" v-bind:movies="carousel" />
-    <h1 v-if="movies" >Now Playing</h1>
-    <div class="feed-grid">
-      <div class="movie-preview" v-for="(movie, index) in movies" v-bind:key="index" >
-        <img v-on:click="loadPreview(index)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
-        <h4>{{ movie.title }}</h4>
-        <p>{{ timeAgo(movie.release_date) }}</p>
-      </div>
-    </div>
-    <div v-if="movies" class="load-more">
-      <button v-on:click="loadMore" >Load more</button>
-    </div>
-    <Loader v-else />
+    <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
+    <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="10" />
+    <h1 v-if="top_rated" >Top Rated <span v-on:click="seeAll('top_rated')" >See all</span></h1>
+    <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="10" />
+    <h1 v-if="upcoming" >Upcoming <span v-on:click="seeAll('upcoming')" >See all</span></h1>
+    <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="10" />
+    <Loader v-else-if="!now_playing" />
   </div>
 </template>
 
@@ -23,18 +18,21 @@ import FeedCarousel from '@/components/FeedCarousel.vue'
 import Loader from '@/components/Loader.vue'
 import timeAgo from '@/utils/timeAgo.js'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
+import FeedGrid from '@/components/FeedGrid.vue'
 
 export default {
   name: 'Feed',
   components: {
     FeedCarousel,
     Loader,
-    ImagePlaceholder
+    ImagePlaceholder,
+    FeedGrid
   },
   data(){
     return {
-      movies: null,
-      latest: null,
+      now_playing: null,
+      top_rated: null,
+      upcoming: null,
       url: null,
       carousel: null,
       page: 1,
@@ -42,29 +40,18 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['ADD_CURRENT_PREVIEW']),
-    loadPreview(i){
-      console.log('Adding to preview')
-      this.ADD_CURRENT_PREVIEW(this.movies[i])
-    },
-
-    loadMore(){
-      this.page++
-      fetch(`${this.url}&page=${this.page}`)
-      .then(d => d.json())
-      .then(res => {
-        this.movies = [...this.movies, ...res.results]
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  
+    seeAll(category){
+      console.log(category + ' clicked!')
     },
 
     timeAgo(date){
       let myDate = date.split('-')
       myDate = myDate.map(d => parseFloat(d))
       return timeAgo(myDate)
-    }
+    },
+
+
 
   },
   mounted(){
@@ -72,11 +59,30 @@ export default {
     fetch(this.url)
     .then(d => d.json())
     .then(res => {
-      console.log(res)
-      this.movies = res.results
-      let random = Math.floor(Math.random() * this.movies.length - 3)
-      this.carousel = [{...this.movies[random]}, {...this.movies[random + 1]}, {...this.movies[random + 2]}]
+      console.log('Now playing',res)
+      this.now_playing = res.results
+      let random = Math.floor((Math.random() * this.now_playing.length) + 1)
+      if(random > 3 )random -= 3
+      this.carousel = [{...this.now_playing[random]}, {...this.now_playing[random + 1]}, {...this.now_playing[random + 2]}]
       console.log(this.carousel)
+    })
+    .catch(err => console.log(err))
+
+    this.url = `${this.api_url}/movie/top_rated?api_key=${this.api_key}`
+    fetch(this.url)
+    .then(d => d.json())
+    .then(res => {
+      console.log('Top rated',res)
+      this.top_rated = res.results
+    })
+    .catch(err => console.log(err))
+
+    this.url = `${this.api_url}/movie/upcoming?api_key=${this.api_key}`
+    fetch(this.url)
+    .then(d => d.json())
+    .then(res => {
+      console.log('Upcoming',res)
+      this.upcoming = res.results
     })
     .catch(err => console.log(err))
   },
@@ -103,43 +109,18 @@ export default {
   font-weight: 500;
   margin: 0px;
   margin-top: 50px;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
-
-.feed-grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-gap: 12px;
-  grid-column-gap: 4px;
-  padding: 12px;
-}
-
-.movie-preview{
-  border-radius: 6px;
-  width: 100%;
-  margin-bottom: 12px;
-}
-.movie-preview img{
-  border-radius: 0px;
-  width: 100%;
-  box-shadow: 0px 35px 30px -30px rgba(0, 0, 0, 0.411);
-  opacity: 0.9;
-  transition: all 0.2s ease-in-out;
-}
-.movie-preview img:hover{
-  opacity: 1;
-  cursor: pointer;
-}
-.movie-preview h4{
-  margin: 0px 0px;
-  font-size: 0.9em;
-  text-align: left;
-  cursor: pointer;
-}
-.movie-preview p{
-  margin: 0px;
-  font-size: 0.8em;
+.feed h1 span{
+  margin-left: 24px;
+  font-size: 0.4em;
+  color: rgba(28, 28, 206, 0.795);
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.486);
+  cursor: pointer;
+  display: grid;
+  align-items: flex-end;
 }
 
 .feed .load-more{

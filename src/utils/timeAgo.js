@@ -1,7 +1,5 @@
 const timeAgo = time => {
 
-    console.log('Time',time)
-
     let timeStamp = new Date(time.join('.'))
     let now = new Date(),
     

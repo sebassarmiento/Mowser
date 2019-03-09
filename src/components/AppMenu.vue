@@ -32,6 +32,7 @@ export default {
     background: white;
     overflow: scroll;
     flex: 1;
+    padding-top: 24px;
 }
 
 .app-menu .link{
