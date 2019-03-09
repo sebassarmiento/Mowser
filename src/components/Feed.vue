@@ -4,7 +4,7 @@
     <h1 v-if="movies" >Now Playing</h1>
     <div class="feed-grid">
       <div class="movie-preview" v-for="(movie, index) in movies" v-bind:key="index" >
-        <img v-on:click="loadPreview(index)" v-bind:src="`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`" alt="">
+        <img v-on:click="loadPreview(index)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
         <h4>{{ movie.title }}</h4>
         <p>{{ timeAgo(movie.release_date) }}</p>
       </div>
@@ -22,12 +22,14 @@ import moment from 'moment'
 import FeedCarousel from '@/components/FeedCarousel.vue'
 import Loader from '@/components/Loader.vue'
 import timeAgo from '@/utils/timeAgo.js'
+import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
 
 export default {
   name: 'Feed',
   components: {
     FeedCarousel,
-    Loader
+    Loader,
+    ImagePlaceholder
   },
   data(){
     return {
@@ -35,7 +37,8 @@ export default {
       latest: null,
       url: null,
       carousel: null,
-      page: 1
+      page: 1,
+      ImagePlaceholder
     }
   },
   methods: {
