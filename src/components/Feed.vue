@@ -1,7 +1,7 @@
 <template>
   <div class="feed">
     <FeedCarousel v-if="carousel" v-bind:movies="carousel" />
-    <h1>Now Playing</h1>
+    <h1 v-if="movies" >Now Playing</h1>
     <div class="feed-grid">
       <div class="movie-preview" v-for="(movie, index) in movies" v-bind:key="index" >
         <img v-on:click="loadPreview(index)" v-bind:src="`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`" alt="">
@@ -9,9 +9,10 @@
         <p>{{ timeAgo(movie.release_date) }}</p>
       </div>
     </div>
-    <div class="load-more">
+    <div v-if="movies" class="load-more">
       <button v-on:click="loadMore" >Load more</button>
     </div>
+    <Loader v-else />
   </div>
 </template>
 
@@ -19,11 +20,14 @@
 import { mapState, mapMutations } from 'vuex'
 import moment from 'moment'
 import FeedCarousel from '@/components/FeedCarousel.vue'
+import Loader from '@/components/Loader.vue'
+import timeAgo from '@/utils/timeAgo.js'
 
 export default {
   name: 'Feed',
   components: {
-    FeedCarousel
+    FeedCarousel,
+    Loader
   },
   data(){
     return {
@@ -56,8 +60,7 @@ export default {
     timeAgo(date){
       let myDate = date.split('-')
       myDate = myDate.map(d => parseFloat(d))
-      // console.log(moment(myDate).fromNow(), myDate)
-      return '1 month ago'
+      return timeAgo(myDate)
     }
 
   },
@@ -88,6 +91,7 @@ export default {
   height: calc(100vh - 60px);
   max-height: calc(100vh - 60px);
   overflow: scroll;
+  position: relative;
 }
 
 
@@ -95,6 +99,7 @@ export default {
   padding: 12px;
   font-weight: 500;
   margin: 0px;
+  margin-top: 50px;
 }
 
 .feed-grid{

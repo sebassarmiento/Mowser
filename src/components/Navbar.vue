@@ -23,6 +23,10 @@ export default {
 #nav{
     height: 60px;
     display: flex;
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: white;
     /* box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.212); */
 }
 

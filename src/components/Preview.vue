@@ -5,6 +5,7 @@
             <div class="rating" ><i class="fas fa-star"></i>{{currentPreview.vote_average}}</div>
             <h2>{{ currentPreview.title }}</h2>
             <p>{{ currentPreview.overview }}</p>
+            <button v-on:click="goTo" >See more</button>
         </div>
     </div>
 </template>
@@ -16,6 +17,11 @@ export default {
     name: 'Preview',
     computed: {
         ...mapState(['currentPreview'])
+    },
+    methods: {
+        goTo(){
+            this.$router.push(`/movie/id/${this.currentPreview.id}`)
+        }
     }
 }
 </script>
@@ -29,11 +35,13 @@ export default {
     max-height: calc(100vh - 60px);
     overflow: scroll;
     transition: all 0.3s ease-in-out;
-    animation: showPreview 0.3s ease-in-out;
+    animation: showPreview1 0.3s ease-in-out;
 }
 .preview img{
     width: 100%;
     display: block;
+    transform: translateY(-100%);
+    animation: showPreviewImage 0.5s ease-in-out 0.3s forwards;
 }
 
 .preview-info{
@@ -55,14 +63,48 @@ export default {
     color: rgb(255, 217, 0);
 }
 
-
 .preview-info h2{
     text-align: left;
     margin: 0px;
     padding-right: 50px;
     line-height: 1.2em;
 }
+.preview-info p{
+    line-height: 1em;
+}
 
+.preview-info button{
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9em;
+    background-color: #2c3e50c4;
+    color: white;
+    font-weight: 500;
+    border: none;
+    position: relative;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 2px;
+}
+.preview-info button::after{
+    content: '';
+    position: absolute;
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transform: scale(0.8, 1);
+    background: #2c3e50;
+    transition: all 0.2s ease-in-out;
+}
+.preview-info button:hover::after{
+    opacity: 1;
+    transform: scale(1);
+    border-radius: 0px;
+}
 
 @keyframes showPreview {
     0%{
@@ -76,6 +118,18 @@ export default {
         min-width: 300px;
         width: 20vw;
         max-width: auto;
+    }
+}
+
+@keyframes showPreviewImage {
+    0%{
+        transform: translateY(-100%);
+    }
+    80%{
+        transform: translateY(20px);
+    }
+    100%{
+        transform: translateY(0);
     }
 }
 
