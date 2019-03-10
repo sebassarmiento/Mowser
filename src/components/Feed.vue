@@ -51,6 +51,16 @@ export default {
       return timeAgo(myDate)
     },
 
+    getData(url, category){
+      fetch(url)
+      .then(d => d.json())
+      .then(res => {
+        console.log('Fetched data', res)
+        this[category] = res.results
+      })
+      .catch(err => console.log)
+    }
+
 
 
   },
@@ -68,23 +78,10 @@ export default {
     })
     .catch(err => console.log(err))
 
-    this.url = `${this.api_url}/movie/top_rated?api_key=${this.api_key}`
-    fetch(this.url)
-    .then(d => d.json())
-    .then(res => {
-      console.log('Top rated',res)
-      this.top_rated = res.results
-    })
-    .catch(err => console.log(err))
+    this.getData(`${this.api_url}/movie/top_rated?api_key=${this.api_key}`, 'top_rated')
 
-    this.url = `${this.api_url}/movie/upcoming?api_key=${this.api_key}`
-    fetch(this.url)
-    .then(d => d.json())
-    .then(res => {
-      console.log('Upcoming',res)
-      this.upcoming = res.results
-    })
-    .catch(err => console.log(err))
+    this.getData(`${this.api_url}/movie/upcoming?api_key=${this.api_key}`, 'upcoming')
+
   },
   computed: {
     ...mapState(['api_url', 'currentSearch', 'api_key'])

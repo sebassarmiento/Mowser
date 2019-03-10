@@ -44,6 +44,8 @@ export default {
   position: relative;
   background: black;
   color: white;
+  max-height: calc(100vh - 60px);
+  overflow: hidden;
 }
 .carousel img{
   min-width: 100%;
