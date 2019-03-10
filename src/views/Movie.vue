@@ -7,27 +7,27 @@
               <div class="extra-info" >
                   <p>{{ movie.original_language.toUpperCase() }}</p>
                   <div class="genres">
-                      <span v-for="g in movie.genres.slice(0, 2)" v-bind:key="g.id" >{{ g.name }}&nbsp;&nbsp;</span>
+                      <span v-for="g in movie.genres.slice(0, 3)" v-bind:key="g.id" >{{ g.name }}&nbsp;&nbsp;</span>
                   </div>
                   <span class="runtime" >{{ movie.runtime }} min</span>
-                  <span>{{ movie.vote_average }}/10</span>
+                  <span class="rating" >{{ movie.vote_average }}/10 <i class="fas fa-star" ></i></span>
               </div>
-              <p>{{ movie.overview }}</p>
+              <p class="overview" >{{ movie.overview }}</p>
               <div class="buttons">
                   <button class="add-wishlist" >Purchase</button>
-                  <button class="play-trailer" v-if="trailer" ><i class="far fa-play-circle"></i>Play trailer</button>
+                  <button class="play-trailer" v-if="trailer" ><i class="far fa-play-circle"></i><span>Play trailer</span></button>
               </div>
           </div>
       </div>
-      <div class="movie-overview">
-          <img v-bind:src="`https://image.tmdb.org/t/p/w154/${movie.poster_path}`" alt="">
-          <div>
-              <span v-for="g in movie.genres" v-bind:key="g.id" >{{ g.name }}</span>
-              <h2>{{ movie.title }} <i class="fas fa-star" ></i>{{ movie.vote_average }}</h2>
-              <p>{{ movie.overview }}</p>
+      <div v-if="cast" class="cast">
+          <div v-for="actor in cast.slice(0, 10)" v-bind:key="actor.name" class="actor">
+              <img v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
+              <span>{{ actor.character }}</span>
+              <p>{{ actor.name }}</p>
           </div>
       </div>
       <div v-if="trailer" class="trailer">
+          <h2>Trailer</h2>
           <iframe v-bind:src="`https://www.youtube.com/embed/${trailer[0].key}`" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
   </div>
@@ -46,7 +46,8 @@ export default {
   data(){
       return {
           movie: null,
-          trailer: null
+          trailer: null,
+          cast: null
       }
   },
   mounted(){
@@ -69,6 +70,19 @@ export default {
       .catch(err => {
           console.log(err)
       })
+
+
+      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/credits?api_key=${this.api_key}`)
+      .then(d => d.json())
+      .then(res => {
+          console.log('Cast', res)
+          this.cast = res.cast
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
+
   },
   computed: {
       ...mapState(['api_url', 'api_key'])
@@ -80,6 +94,11 @@ export default {
 <style scoped>
 
 .movie{
+}
+
+@keyframes fadeMovie {
+    0%{opacity: 0; transform: translateX(100px);}
+    100%{opacity: 1; transform: translateX(0px);}
 }
 
 .bg-image{
@@ -112,6 +131,7 @@ export default {
     padding: 24px;
     border-radius: 24px;
     z-index: 2;
+    animation: fadeMovie 1s ease-in-out;
 }
 .movie-info h2{
     font-size: 2.2em;
@@ -128,22 +148,21 @@ export default {
 .movie-info .extra-info p, .movie-info .extra-info .genres, .movie-info .extra-info .runtime{
     margin-right: 24px;
 }
-
-.movie-overview span{
-    margin-right: 6px;
-    font-size: 0.8em;
-    font-weight: 500;
+.movie-info .extra-info .rating i{
+    margin-left: 2px;
+    font-size: 0.9em;
+    transform: translateY(-1px);
 }
-.movie-overview{
+.movie-info .overview{
+    font-size: 0.95em;
+    font-weight: 400;
+    padding-bottom: 12px;
+}
+
+
+.buttons{
     display: flex;
-    padding: 24px;
 }
-.movie-overview img{
-    border-radius: 4px;
-    margin-right: 12px;
-    box-shadow: 0px 50px 30px -30px rgba(0, 0, 0, 0.61);
-}
-
 .add-wishlist{
     padding: 18px 40px;
     border: none;
@@ -163,17 +182,53 @@ export default {
     color: white;
     cursor: pointer;
     background: transparent;
+    display: flex;
     align-items: center;
 }
 .play-trailer i{
     margin-right: 12px;
     font-size: 2em;
 }
+.play-trailer span{
+    transform: translateY(-1px);
+}
 
-
+.trailer h2{
+    text-align: center;
+}
 .trailer iframe{
-    width: 100vw;
-    height: calc(100vh - 60px);
+    width: 70vw;
+    height: 70vh;
+    display: block;
+    margin: 24px auto;
+}
+
+
+.cast{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    padding: 12px;
+}
+.cast .actor img{
+    width: 120px;
+}
+.cast .actor{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.cast .actor span{
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 4px;
+}
+.cast .actor p{
+    margin-top: 4px;
+    line-height: 1.2em;
+    max-height: 1.2em;
+    overflow: hidden;
 }
 
 </style>
