@@ -19,17 +19,30 @@
               </div>
           </div>
       </div>
-      <div v-if="cast" class="cast">
-          <div v-for="actor in cast.slice(0, 10)" v-bind:key="actor.name" class="actor">
-              <img v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
-              <span>{{ actor.character }}</span>
-              <p>{{ actor.name }}</p>
+      <div v-if="cast" class="cast-container">
+          <h2>Cast</h2>
+          <div class="cast">
+              <div v-for="actor in cast.slice(0, 20)" v-bind:key="actor.name" class="actor">
+              <img v-if="actor.profile_path" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
+              <span v-if="actor.profile_path" >{{ actor.character }}</span>
+              <p v-if="actor.profile_path" >{{ actor.name }}</p>
+          </div>
           </div>
       </div>
       <div v-if="trailer" class="trailer">
           <h2>Trailer</h2>
           <iframe v-bind:src="`https://www.youtube.com/embed/${trailer[0].key}`" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
+      <div v-if="recommended" class="recommended-container">
+          <h2>Others you might like</h2>
+          <div class="recommended">
+              <div v-for="r in recommended" v-bind:key="r._id" >
+                  <img v-bind:src="`https://image.tmdb.org/t/p/w154${r.poster_path}`" alt="">
+                  <p>{{ r.title }} <span><i class="fas fa-star" ></i> {{ r.vote_average }}</span></p>
+              </div>
+          </div>
+      </div>
+      <Footer />
   </div>
   <Loader v-else />
 </template>
@@ -37,17 +50,21 @@
 <script>
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'Movie',
   components: {
-      Loader
+      Loader,
+      Footer
   },
   data(){
       return {
           movie: null,
           trailer: null,
-          cast: null
+          cast: null,
+          recommended: null,
+          images: null
       }
   },
   mounted(){
@@ -83,6 +100,28 @@ export default {
       })
 
 
+      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/recommendations?api_key=${this.api_key}`)
+      .then(d => d.json())
+      .then(res => {
+          console.log('Recommended', res)
+          this.recommended = res.results
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
+
+      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/images?api_key=${this.api_key}`)
+      .then(d => d.json())
+      .then(res => {
+          console.log('Images', res)
+          this.images = res
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
+
   },
   computed: {
       ...mapState(['api_url', 'api_key'])
@@ -94,11 +133,6 @@ export default {
 <style scoped>
 
 .movie{
-}
-
-@keyframes fadeMovie {
-    0%{opacity: 0; transform: translateX(100px);}
-    100%{opacity: 1; transform: translateX(0px);}
 }
 
 .bg-image{
@@ -131,7 +165,11 @@ export default {
     padding: 24px;
     border-radius: 24px;
     z-index: 2;
-    animation: fadeMovie 1s ease-in-out;
+    animation: fadeMovieInfo 1s ease-out;
+}
+@keyframes fadeMovieInfo {
+    0%{opacity: 0; transform: translateX(100px);}
+    100%{opacity: 1; transform: translateX(0px);}
 }
 .movie-info h2{
     font-size: 2.2em;
@@ -203,14 +241,16 @@ export default {
     margin: 24px auto;
 }
 
-
+.cast-container{
+    padding: 50px;
+}
 .cast{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    display: flex;
     padding: 12px;
+    overflow: scroll;
 }
 .cast .actor img{
-    width: 120px;
+    margin: 0px 4px;
 }
 .cast .actor{
     display: flex;
@@ -229,6 +269,47 @@ export default {
     line-height: 1.2em;
     max-height: 1.2em;
     overflow: hidden;
+}
+
+
+.recommended-container{
+    padding: 50px;
+}
+
+.recommended{
+    display: flex;
+    overflow: scroll;
+    padding: 12px;
+}
+
+.recommended div{
+    margin: 0px 6px;
+    cursor: pointer;
+}
+.recommended img{
+    transition: all 0.2s ease-in-out;
+}
+.recommended img:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+.recommended p{
+    margin: 4px 0px;
+    font-size: 0.9em;
+    font-weight: 600;
+    position: relative;
+    padding-right: 36px;
+    line-height: 1.2em;
+}
+.recommended span{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    font-size: 0.8em;
+    height: 1.5em;
+}
+.recommended span i{
+    color: rgb(255, 196, 0);
 }
 
 </style>
