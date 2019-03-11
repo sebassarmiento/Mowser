@@ -7,7 +7,7 @@
               <div class="extra-info" >
                   <p>{{ movie.original_language.toUpperCase() }}</p>
                   <div class="genres">
-                      <span v-for="g in movie.genres.slice(0, 3)" v-bind:key="g.id" >{{ g.name }}&nbsp;&nbsp;</span>
+                      <span v-for="g in movie.genres.slice(0, 2)" v-bind:key="g.id" >{{ g.name }}&nbsp;&nbsp;</span>
                   </div>
                   <span class="runtime" >{{ movie.runtime }} min</span>
                   <span class="rating" >{{ movie.vote_average }}/10 <i class="fas fa-star" ></i></span>
@@ -22,7 +22,7 @@
       <div v-if="cast" class="cast-container">
           <h2>Cast</h2>
           <div class="cast">
-              <div v-for="actor in cast.slice(0, 20)" v-bind:key="actor.name" class="actor">
+              <div v-for="actor in cast.slice(0, 20)" v-bind:key="actor.name" v-on:click="redirect(actor.id, 'people')" class="actor">
               <img v-if="actor.profile_path" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
               <span v-if="actor.profile_path" >{{ actor.character }}</span>
               <p v-if="actor.profile_path" >{{ actor.name }}</p>
@@ -36,7 +36,7 @@
       <div v-if="recommended" class="recommended-container">
           <h2>Others you might like</h2>
           <div class="recommended">
-              <div v-for="r in recommended" v-bind:key="r._id" >
+              <div v-for="r in recommended" v-bind:key="r._id" v-on:click="redirect(r.id, 'movie')" >
                   <img v-bind:src="`https://image.tmdb.org/t/p/w154${r.poster_path}`" alt="">
                   <p>{{ r.title }} <span><i class="fas fa-star" ></i> {{ r.vote_average }}</span></p>
               </div>
@@ -67,8 +67,14 @@ export default {
           images: null
       }
   },
-  mounted(){
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}?api_key=${this.api_key}`)
+  methods: {
+      redirect(id, type){
+          this.$router.push(`/${type}/id/${id}`)
+      },
+
+      getData(){
+
+          fetch(`${this.api_url}/movie/${this.$route.params.movieId}?api_key=${this.api_key}`)
       .then(d => d.json())
       .then(res => {
           console.log(res)
@@ -121,7 +127,22 @@ export default {
           console.log(err)
       })
 
-
+      }
+  },
+  mounted(){
+      this.getData()
+  },
+  watch: {
+      '$route' (to, from){
+          console.log('Route changed', from, to)
+          for(let k in this._data){
+              if(this._data.hasOwnProperty(k)){
+                  this[k] = null
+              }
+          }
+          window.scrollTo(0, 0)
+          this.getData()
+      }
   },
   computed: {
       ...mapState(['api_url', 'api_key'])
@@ -246,17 +267,24 @@ export default {
 }
 .cast{
     display: flex;
+    align-items: flex-start;
     padding: 12px;
     overflow: scroll;
 }
-.cast .actor img{
+.cast img{
+    transition: all 0.2s ease-in-out;
     margin: 0px 4px;
+}
+.cast img:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 .cast .actor{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 .cast .actor span{
     font-size: 0.9em;
