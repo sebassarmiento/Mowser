@@ -3,7 +3,7 @@
         <div class="person-profile">
             <img v-bind:src="`https://image.tmdb.org/t/p/w500${person.profile_path}`" alt="">
             <div>
-                <h2>{{ person.name }}</h2>
+                <h2>{{ person.name }}, <span>{{ getAge(person.birthday) }}</span></h2>
                 <p>Born in {{ person.place_of_birth }}</p>
             </div>
         </div>
@@ -16,6 +16,10 @@
                     <img v-bind:src="`https://image.tmdb.org/t/p/w500${p.file_path}`" alt="">
                 </div>
             </div>
+            <h3>Movies</h3>
+            <div v-if="movies" >
+                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+            </div>
         </div>
     </div>
     <Loader v-else />
@@ -24,17 +28,27 @@
 <script>
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
+import FeedGrid from '@/components/FeedGrid.vue'
 
 export default {
     name: 'People',
     components: {
-        Loader
+        Loader,
+        FeedGrid
     },
     data(){
         return {
             person: null,
             movies: null,
             photos: null
+        }
+    },
+    methods: {
+        getAge(date){
+            let year = new Date(date.split('-').join('.')).getFullYear()
+            let now = new Date().getFullYear()
+
+            return now - year;
         }
     },
     mounted(){
@@ -52,6 +66,14 @@ export default {
         .then(res => {
             console.log(res)
             this.photos = res.profiles
+        })
+        .catch(err => console.log(err))
+
+        fetch(`${this.api_url}/person/${this.$route.params.personId}/movie_credits?api_key=${this.api_key}`)
+        .then(d => d.json())
+        .then(res => {
+            console.log('Credits' ,res)
+            this.movies = res.cast
         })
         .catch(err => console.log(err))
 
@@ -79,7 +101,7 @@ p, h2, h3{
     min-height: calc(100vh - 60px);
     max-height: calc(100vh - 60px);
     position: sticky;
-    top: 72px;
+    top: 60px;
     left: 0px;
 }
 .person-profile img{
@@ -92,6 +114,7 @@ p, h2, h3{
     padding: 12px;
 }
 .person-info h3{
+    font-size: 1.4em;
     margin: 24px 0px;
 }
 .biography{
@@ -104,7 +127,8 @@ p, h2, h3{
 .photos{
     display: grid;
     grid-gap: 24px;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 140px));
+    margin-bottom: 24px;
 }
 .photos img{
     width: 100%;

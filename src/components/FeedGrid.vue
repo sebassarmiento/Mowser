@@ -3,7 +3,7 @@
       <div class="movie-preview" v-for="(movie, index) in limitMovies()" v-bind:key="index" >
         <img v-on:click="loadPreview(index)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
         <h4>{{ movie.title }}</h4>
-        <p>{{ timeAgo(movie.release_date) }}</p>
+        <p>{{ movie.release_date ? timeAgo(movie.release_date) : null }}</p>
       </div>
     </div>
 </template>
@@ -16,6 +16,11 @@ import { mapMutations } from 'vuex'
 
 export default {
     name: 'FeedGrid',
+    data(){
+      return {
+        ImagePlaceholder
+      }
+    },
     props: {
         movies: Array,
         limit: Number
@@ -24,10 +29,17 @@ export default {
         ...mapMutations(['ADD_CURRENT_PREVIEW']),
         loadPreview(i){
         console.log('Adding to preview')
-        this.ADD_CURRENT_PREVIEW(this.movies[i])
+        console.log(this.$route)
+        if(this.$route.name === 'feed'){
+          this.ADD_CURRENT_PREVIEW(this.movies[i])
+        } else {
+          window.scrollTo(0, 0)
+          this.$router.push(`/movie/id/${this.movies[i].id}`)
+        }
         },
 
         timeAgo(date){
+          console.log('Date',date)
             let myDate = date.split('-')
             myDate = myDate.map(d => parseFloat(d))
             return timeAgo(myDate)
