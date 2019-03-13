@@ -8,6 +8,8 @@
             <button v-on:click="goTo" >See more</button>
         </div>
     </div>
+    <div v-else class="preview" >
+    </div>
 </template>
 
 <script>

@@ -1,5 +1,6 @@
 <template>
     <div class="app-menu">
+        <router-link class="link" to="/discover" ><i class="fas fa-search"></i>Discover</router-link>
         <h1>Movies<i class="fas fa-film"></i></h1>
         <router-link class="link" to="/feed/top-rated" ><i class="fas fa-circle"></i>Top rated</router-link>
         <router-link class="link" to="/feed/upcoming" ><i class="fas fa-circle"></i>Upcoming</router-link>
@@ -53,10 +54,7 @@ export default {
     color: indigo;
 }
 .app-menu .link i{
-    padding: 12px;
-    font-size: 6px;
     margin-right: 12px;
-    display: none;
 }
 .app-menu h1{
     margin: 0px;

@@ -1,10 +1,14 @@
 <template>
-    <div class="feed-grid">
+    <div class="container" >
+      <div v-bind:ref="scroll" class="feed-grid">
       <div class="movie-preview" v-for="(movie, index) in limitMovies()" v-bind:key="index" >
         <img v-on:click="loadPreview(index)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
         <h4>{{ movie.title }}</h4>
         <p>{{ movie.release_date ? timeAgo(movie.release_date) : null }}</p>
       </div>
+      <i v-on:click="handleScroll('left')" class="fas fa-long-arrow-alt-left scroll-btn left"></i>
+      <i v-on:click="handleScroll('right')" class="fas fa-long-arrow-alt-right scroll-btn right"></i>
+    </div>
     </div>
 </template>
 
@@ -13,12 +17,14 @@
 import timeAgo from '@/utils/timeAgo.js'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
 import { mapMutations } from 'vuex'
+import handleScroll from '@/utils/handleScroll.js'
 
 export default {
     name: 'FeedGrid',
     data(){
       return {
-        ImagePlaceholder
+        ImagePlaceholder,
+        scroll: 'scrollElement'
       }
     },
     props: {
@@ -52,24 +58,34 @@ export default {
                 console.log('Entra normal')
                 return this.movies
             }
-        }
+        },
+
+        handleScroll(dir, element){
+              handleScroll(this.$refs.scrollElement, dir)
+        },
+
     }
 }
 </script>
 
 <style scoped>
 
+.container{
+  padding: 12px 24px;
+  position: relative;
+  width: 100%;
+}
+
 
 .feed-grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-gap: 12px 4px;
-  padding: 12px;
+  display: flex;
+  overflow: scroll;
 }
 
 .movie-preview{
   border-radius: 6px;
-  width: 100%;
+  min-width: 220px;
+  margin: 0px 2px;
 }
 .movie-preview img{
   border-radius: 0px;
@@ -93,6 +109,31 @@ export default {
   font-size: 0.8em;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.486);
+}
+
+
+
+.scroll-btn{
+    height: 50px;
+    width: 50px;
+    min-width: 50px;
+    border-radius: 50%;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    position: absolute;
+    cursor: pointer;
+    z-index: 2;
+}
+.scroll-btn.right{
+    top: 50px;
+    right: 0px;
+}
+.scroll-btn.left{
+    top: 50px;
+    left: 0px;
 }
 
 </style>

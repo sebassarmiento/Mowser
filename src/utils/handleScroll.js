@@ -1,16 +1,6 @@
 export default (element, direction) => {
 
-    console.log('Element', element)
-    console.log('Direction', direction)
-
     let maxScroll = element.scrollWidth - element.clientWidth
-
-    console.log('Max scroll => ', maxScroll)
-
-    console.log(element.scrollLeft)
-
-    console.log('Children', element.children)
-
 
     let previous = element.scrollLeft
 

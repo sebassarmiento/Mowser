@@ -110,7 +110,7 @@ export default {
       .then(d => d.json())
       .then(res => {
           console.log('Videos', res)
-          if(res.results.lenght < 0){
+          if(res.results.length > 0){
               this.trailer = res.results
           }
       })
@@ -134,7 +134,9 @@ export default {
       .then(d => d.json())
       .then(res => {
           console.log('Recommended', res)
-          this.recommended = res.results
+          if(res.results.length > 0){
+              this.recommended = res.results
+          }
       })
       .catch(err => {
           console.log(err)

@@ -3,8 +3,8 @@
         <div class="person-profile">
             <img v-bind:src="`https://image.tmdb.org/t/p/w500${person.profile_path}`" alt="">
             <div>
-                <h2>{{ person.name }}, <span>{{ getAge(person.birthday) }}</span></h2>
-                <p>Born in {{ person.place_of_birth }}</p>
+                <h2>{{ person.name }}<span v-if="person.birthday" >, {{ getAge(person.birthday) }}</span></h2>
+                <p v-if="person.place_of_birth" >Born in {{ person.place_of_birth }}</p>
             </div>
         </div>
         <div class="person-info">
@@ -15,6 +15,22 @@
                 <div v-for="(p, i) in photos" v-bind:key="i" class="photo" >
                     <img v-bind:src="`https://image.tmdb.org/t/p/w500${p.file_path}`" alt="">
                 </div>
+            </div>
+            <h3>Movies</h3>
+            <div v-if="movies" >
+                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+            </div>
+            <h3>Movies</h3>
+            <div v-if="movies" >
+                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+            </div>
+            <h3>Movies</h3>
+            <div v-if="movies" >
+                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+            </div>
+            <h3>Movies</h3>
+            <div v-if="movies" >
+                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
             </div>
             <h3>Movies</h3>
             <div v-if="movies" >
@@ -98,20 +114,24 @@ p, h2, h3{
 .person-profile{
     padding: 12px;
     min-width: 26vw;
-    min-height: calc(100vh - 60px);
-    max-height: calc(100vh - 60px);
+    min-height: calc(100vh - 84px);
+    max-height: calc(100vh - 84px);
     position: sticky;
-    top: 60px;
+    top: 72px;
     left: 0px;
+    background: red;
 }
 .person-profile img{
-    width: 100%;
+    width: auto;
+    max-height: 400px;
     border-radius: 12px;
     margin-bottom: 12px;
 }
 
 .person-info{
     padding: 12px;
+    background: green;
+    max-width: calc(74vw - 24px);
 }
 .person-info h3{
     font-size: 1.4em;

@@ -2,11 +2,11 @@
   <div class="feed">
     <FeedCarousel v-if="carousel" v-bind:movies="carousel" />
     <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
-    <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="10" />
+    <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="20" />
     <h1 v-if="top_rated" >Top Rated <span v-on:click="seeAll('top_rated')" >See all</span></h1>
-    <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="10" />
+    <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="20" />
     <h1 v-if="upcoming" >Upcoming <span v-on:click="seeAll('upcoming')" >See all</span></h1>
-    <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="10" />
+    <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="20" />
     <Loader v-else-if="!now_playing" />
   </div>
 </template>
@@ -43,6 +43,7 @@ export default {
   
     seeAll(category){
       console.log(category + ' clicked!')
+      this.$router.push(`/feed/${category}`)
     },
 
     timeAgo(date){
@@ -105,7 +106,7 @@ export default {
   padding: 12px;
   font-weight: 500;
   margin: 0px;
-  margin-top: 50px;
+  margin-top: 24px;
   position: relative;
   display: flex;
   align-items: center;
