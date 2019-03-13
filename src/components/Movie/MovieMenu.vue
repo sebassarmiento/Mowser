@@ -1,16 +1,27 @@
 <template>
     <div class="movie-menu">
-        <div class="movie-menu-btn">Videos</div>
-        <div class="movie-menu-btn">Images</div>
-        <div class="movie-menu-btn">Cast</div>
-        <div class="movie-menu-btn">Reviews</div>
-        <div class="movie-menu-btn">Credits</div>
+        <div v-on:click="select('cast')" class="movie-menu-btn" v-bind:class="current" >Cast</div>
+        <div v-on:click="select('images')" class="movie-menu-btn" >Images</div>
+        <div v-on:click="select('videos')" class="movie-menu-btn" >Videos</div>
+        <div v-on:click="select('reviews')" class="movie-menu-btn" >Reviews</div>
+        <div v-on:click="select('credits')" class="movie-menu-btn" >Credits</div>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'MovieMenu'
+    name: 'MovieMenu',
+    data(){
+        return {
+            current: 'cast'
+        }
+    },
+    methods: {
+        select(ele){
+            this.current = ele
+            console.log('Click', this.current)
+        }
+    }
 }
 </script>
 
@@ -42,6 +53,23 @@ export default {
     width: 100%;
     height: 2px;
     background: purple;
+    transition: all 0.3s ease-in-out;
+}
+
+.movie-menu .movie-menu-btn.cast::after{
+    transform: translateX(0px);
+}
+.movie-menu .movie-menu-btn.images::after{
+    transform: translateX(100px);
+}
+.movie-menu .movie-menu-btn.videos::after{
+    transform: translateX(200px);
+}
+.movie-menu .movie-menu-btn.reviews::after{
+    transform: translateX(300px);
+}
+.movie-menu .movie-menu-btn.credits::after{
+    transform: translateX(400px);
 }
 
 

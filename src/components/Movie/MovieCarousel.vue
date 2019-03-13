@@ -24,6 +24,9 @@ export default {
         }
     },
     methods: {
+        redirect(id, type){
+          this.$router.push(`/${type}/id/${id}`)
+        },
         handleScroll(dir){
             handleScroll(this.$refs.scroll, dir)
         }

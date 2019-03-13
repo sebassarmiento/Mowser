@@ -122,7 +122,7 @@ p, h2, h3{
     background: red;
 }
 .person-profile img{
-    width: auto;
+    width: 100%;
     max-height: 400px;
     border-radius: 12px;
     margin-bottom: 12px;
