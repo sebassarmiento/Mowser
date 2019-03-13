@@ -1,6 +1,7 @@
 export default (element, direction) => {
 
     console.log('Element', element)
+    console.log('Direction', direction)
 
     let maxScroll = element.scrollWidth - element.clientWidth
 

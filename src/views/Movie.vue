@@ -71,9 +71,17 @@ export default {
           recommendedScroll: 'recElement'
       }
   },
+  updated(){
+      console.log("UPDATED!!")
+      if(this.recommended){
+          this.recommendedScroll = 'recElement'
+      }
+  },
   methods: {
       redirect(id, type){
           this.$router.push(`/${type}/id/${id}`)
+          console.log('Changing key')
+          this.componentKey++
       },
 
       handleScroll(dir){
@@ -140,6 +148,7 @@ export default {
       }
   },
   mounted(){
+      console.log('Mounted')
       this.getData()
   },
   watch: {
