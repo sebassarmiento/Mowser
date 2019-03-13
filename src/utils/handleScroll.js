@@ -9,6 +9,9 @@ export default (element, direction) => {
 
     console.log(element.scrollLeft)
 
+    console.log('Children', element.children)
+
+
     let previous = element.scrollLeft
 
     let intervalRight = null, intervalLeft = null

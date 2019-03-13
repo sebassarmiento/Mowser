@@ -21,13 +21,15 @@
       </div>
       <div v-if="cast" class="cast-container">
           <h2>Cast</h2>
-          <div class="cast">
+          <div v-bind:ref="castScroll" class="cast">
               <div v-for="actor in cast.slice(0, 20)" v-bind:key="actor.name" v-on:click="redirect(actor.id, 'people')" class="actor">
               <img v-if="actor.profile_path" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
               <span v-if="actor.profile_path" >{{ actor.character }}</span>
               <p v-if="actor.profile_path" >{{ actor.name }}</p>
+              </div>
           </div>
-          </div>
+          <i v-on:click="handleScroll('left', 'cast')" class="fas fa-long-arrow-alt-left scroll-btn left"></i>
+          <i v-on:click="handleScroll('right', 'cast')" class="fas fa-long-arrow-alt-right scroll-btn right"></i>
       </div>
       <div v-if="trailer" class="trailer">
           <h2>Trailer</h2>
@@ -35,13 +37,13 @@
       </div>
       <div v-if="recommended" class="recommended-container">
           <h2>Others you might like</h2>
-          <i v-on:click="handleScroll('left')" class="fas fa-long-arrow-alt-left scroll-btn left"></i>
           <div v-bind:ref="recommendedScroll" class="recommended">
               <div v-for="r in recommended" v-bind:key="r._id" v-on:click="redirect(r.id, 'movie')" >
                   <img v-bind:src="`https://image.tmdb.org/t/p/w154${r.poster_path}`" alt="">
                   <p>{{ r.title }} <span><i class="fas fa-star" ></i> {{ r.vote_average }}</span></p>
               </div>
           </div>
+          <i v-on:click="handleScroll('left')" class="fas fa-long-arrow-alt-left scroll-btn left"></i>
           <i v-on:click="handleScroll('right')" class="fas fa-long-arrow-alt-right scroll-btn right"></i>
       </div>
       <Footer />
@@ -68,24 +70,28 @@ export default {
           cast: null,
           recommended: null,
           images: null,
-          recommendedScroll: 'recElement'
+          recommendedScroll: 'recElement',
+          castScroll: 'castElement'
       }
   },
   updated(){
       console.log("UPDATED!!")
-      if(this.recommended){
+      if(this.recommended && this.cast){
           this.recommendedScroll = 'recElement'
+          this.castScroll = 'castElement'
       }
   },
   methods: {
       redirect(id, type){
           this.$router.push(`/${type}/id/${id}`)
-          console.log('Changing key')
-          this.componentKey++
       },
 
-      handleScroll(dir){
-          handleScroll(this.$refs.recElement, dir)
+      handleScroll(dir, element){
+          if(element === 'cast'){
+              handleScroll(this.$refs.castElement, dir)
+          } else {
+              handleScroll(this.$refs.recElement, dir)
+          }
       },
 
       getData(){
@@ -283,6 +289,7 @@ export default {
 
 .cast-container{
     padding: 50px;
+    position: relative;
 }
 .cast{
     display: flex;
