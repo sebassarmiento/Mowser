@@ -7,7 +7,8 @@
           <MovieMenu v-if="cast" v-bind:counts="getCategoryCount()" />
 
           <div v-if="menu.cast && cast" class="cast">
-              <h2>Showing {{ castSlice > cast.length ? cast.length : castSlice }} of {{ cast.length }} <span v-if="castSlice <= cast.length" v-on:click="castSlice === 10 ? castSlice = cast.length : castSlice = 10" >{{ castSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+              <h2 v-if="cast.length > 0" >Showing {{ castSlice > cast.length ? cast.length : castSlice }} of {{ cast.length }} <span v-if="castSlice <= cast.length" v-on:click="castSlice === 10 ? castSlice = cast.length : castSlice = 10" >{{ castSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+              <h2 v-else class="no-elements" >No cast to show</h2>
               <div v-for="actor in cast.filter(a => a.profile_path).slice(0, castSlice)" v-bind:key="actor.id" class="actor">
                   <img v-on:click="redirect(actor.id, 'people')" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
                   <span >{{ actor.character }}</span>
@@ -20,12 +21,15 @@
         </div>
 
         <div v-if="menu.images && images" class="images">
-              <h2>Showing {{ imagesSlice > images.length ? images.length : imagesSlice }} of {{ images.posters.length }} <span v-if="imagesSlice <= images.posters.length" v-on:click="imagesSlice === 10 ? imagesSlice = images.posters.length : imagesSlice = 10" >{{ imagesSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+              <h2 v-if="images.posters.length > 0" >Showing {{ imagesSlice > images.posters.length ? images.posters.length : imagesSlice }} of {{ images.posters.length }} <span v-if="imagesSlice <= images.posters.length" v-on:click="imagesSlice === 10 ? imagesSlice = images.posters.length : imagesSlice = 10" >{{ imagesSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+              <h2 v-else class="no-elements" >No images to show</h2>
+
             <img v-for="image in images.posters.slice(0, imagesSlice)" v-bind:key="image.id" v-bind:src="`https://image.tmdb.org/t/p/w154${image.file_path}`" alt="">
         </div>
 
         <div v-if="menu.reviews && reviews" class="reviews">
-            <h2 class="showing-reviews" >Showing {{ reviewsSlice > reviews.length ? reviews.length : reviewsSlice }} of {{ reviews.length }} <span v-if="reviewsSlice <= reviews.length" v-on:click="reviewsSlice === 10 ? reviewsSlice = reviews.length : reviewsSlice = 10" >{{ reviewsSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+            <h2 v-if="reviews.length > 0" class="showing-reviews" >Showing {{ reviewsSlice > reviews.length ? reviews.length : reviewsSlice }} of {{ reviews.length }} <span v-if="reviewsSlice <= reviews.length" v-on:click="reviewsSlice === 10 ? reviewsSlice = reviews.length : reviewsSlice = 10" >{{ reviewsSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+            <h2 v-else class="no-elements" >No reviews to show</h2>
             <div v-for="r in reviews" v-bind:key="r.id" class="review">
                 <div class="review-user">
                     <i class="fas fa-user" ></i><h2>{{ r.author }}</h2>
@@ -36,10 +40,9 @@
 
           </div>
           <div class="movie-column-2">
-              <h2>Extra info</h2>
               <p>Budget: <i class="fas fa-dollar-sign"></i><span> {{ movie.budget.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
               <p>Revenue: <i class="fas fa-dollar-sign"></i><span> {{ movie.revenue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
-              <a v-bind:href="movie.homepage" target="_blank" >Go to website</a>
+              <a v-bind:href="movie.homepage" target="_blank" class="movie-website" >Website</a>
               <p>Production companies</p>
               <div class="production-companies" >
                   <div v-for="c in movie.production_companies.filter(c => c.logo_path)" v-bind:key="c.id" >
@@ -98,7 +101,7 @@ export default {
               credits: null,
               reviews: null
           },
-          castSclice: 10,
+          castSlice: 10,
           reviewsSlice: 10,
           imagesSlice: 10
       }
@@ -144,94 +147,39 @@ export default {
           console.log(e.target.scrollY)
       },
 
+      fetchData(param, key, resultKey){
+          console.log(`${this.api_url}/movie/${this.$route.params.movieId}${param ? `/${param}` : ''}?api_key=${this.api_key}`)
+          fetch(`${this.api_url}/movie/${this.$route.params.movieId}${param ? `/${param}` : ''}?api_key=${this.api_key}`)
+          .then(d => d.json())
+          .then(res => {
+              this[key] = resultKey ? res[resultKey] : res
+          })
+          .catch(err => {
+              console.log(err)
+          })
+      },
+
       getData(){
 
-          fetch(`${this.api_url}/movie/${this.$route.params.movieId}?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          //console.log(res)
-          this.movie = res
-      })
-      .catch(err => {
-          console.log(err)
-      })
+        this.fetchData( null,'movie')
 
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/videos?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          //console.log('Videos', res)
-          if(res.results.length > 0){
-              this.videos = res.results
-          }
-      })
-      .catch(err => {
-          console.log(err)
-      })
+        this.fetchData('videos', 'videos', 'results')
 
+        this.fetchData('credits', 'cast', 'cast')
 
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/credits?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          //console.log('Cast', res)
-          this.cast = res.cast
-      })
-      .catch(err => {
-          console.log(err)
-      })
+        this.fetchData('recommendations', 'recommended', 'results')
 
+        this.fetchData('images', 'images')
 
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/recommendations?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          //console.log('Recommended', res)
-          if(res.results.length > 0){
-              this.recommended = res.results
-          }
-      })
-      .catch(err => {
-          console.log(err)
-      })
+        this.fetchData('keywords','keywords', 'keywords')
 
-
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/images?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          //console.log('Images', res)
-          this.images = res
-      })
-      .catch(err => {
-          console.log(err)
-      })
-
-
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/keywords?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          console.log('Keywords', res)
-          this.keywords = res.keywords
-      })
-      .catch(err => {
-          console.log(err)
-      })
-
-      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/reviews?api_key=${this.api_key}`)
-      .then(d => d.json())
-      .then(res => {
-          console.log('reviews', res)
-          this.reviews = res.results
-      })
-      .catch(err => {
-          console.log(err)
-      })
+        this.fetchData('reviews','reviews', 'results')
 
       }
   },
   mounted(){
       console.log('Mounted')
       this.getData()
-      this.$on('click', () => {
-          console.log('Chooooseeen')
-      })
   },
   watch: {
       '$route' (to, from){
@@ -257,6 +205,14 @@ export default {
 .movie{
 }
 
+.no-elements{
+    font-size: 1em;
+    font-weight: 500;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
 
 .movie-grid{
@@ -268,6 +224,7 @@ export default {
 .movie-column-1{
     min-width: 70vw;
     max-width: 70vw;
+    position: relative;
 }
 .movie-column-2{
     background: rgb(224, 224, 224);
@@ -280,6 +237,14 @@ export default {
     top: 72px;
     right: 12px;
     padding: 12px;
+}
+
+
+.movie-website{
+    font-size: 0.8em;
+    color: rgb(33, 78, 201);
+    font-weight: 400;
+    cursor: pointer;
 }
 
 
