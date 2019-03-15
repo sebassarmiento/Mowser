@@ -24,7 +24,20 @@
 
           </div>
           <div class="movie-column-2">
-              <h1>Info</h1>
+              <h2>Extra info</h2>
+              <p>Budget: <i class="fas fa-dollar-sign"></i><span> {{ movie.budget.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
+              <p>Revenue: <i class="fas fa-dollar-sign"></i><span> {{ movie.revenue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
+              <a v-bind:href="movie.homepage" target="_blank" >Go to website</a>
+              <div class="production-companies" >
+                  <p>Production companies</p>
+                  <img v-for="c in movie.production_companies" v-bind:key="c.id" v-bind:src="`https://image.tmdb.org/t/p/w154${c.logo_path}`" alt="">
+              </div>
+              <p>Vote average: {{ movie.vote_average }}</p>
+              <p>Votes: {{ movie.vote_count }}</p>
+              <div class="keywords" >
+                  <p>Keywords</p>
+                  <span v-for="k in keywords" v-bind:key="k.id" >{{ k.name }}</span>
+              </div>
           </div>
       </div>
         <MovieCarousel v-bind:movies="recommended" />
@@ -60,6 +73,7 @@ export default {
           cast: null,
           recommended: null,
           images: null,
+          keywords: null,
           recommendedScroll: 'recElement',
           castScroll: 'castElement',
           menu: {
@@ -117,7 +131,7 @@ export default {
           fetch(`${this.api_url}/movie/${this.$route.params.movieId}?api_key=${this.api_key}`)
       .then(d => d.json())
       .then(res => {
-          console.log(res)
+          //console.log(res)
           this.movie = res
       })
       .catch(err => {
@@ -127,7 +141,7 @@ export default {
       fetch(`${this.api_url}/movie/${this.$route.params.movieId}/videos?api_key=${this.api_key}`)
       .then(d => d.json())
       .then(res => {
-          console.log('Videos', res)
+          //console.log('Videos', res)
           if(res.results.length > 0){
               this.videos = res.results
           }
@@ -140,7 +154,7 @@ export default {
       fetch(`${this.api_url}/movie/${this.$route.params.movieId}/credits?api_key=${this.api_key}`)
       .then(d => d.json())
       .then(res => {
-          console.log('Cast', res)
+          //console.log('Cast', res)
           this.cast = res.cast
       })
       .catch(err => {
@@ -151,7 +165,7 @@ export default {
       fetch(`${this.api_url}/movie/${this.$route.params.movieId}/recommendations?api_key=${this.api_key}`)
       .then(d => d.json())
       .then(res => {
-          console.log('Recommended', res)
+          //console.log('Recommended', res)
           if(res.results.length > 0){
               this.recommended = res.results
           }
@@ -164,8 +178,19 @@ export default {
       fetch(`${this.api_url}/movie/${this.$route.params.movieId}/images?api_key=${this.api_key}`)
       .then(d => d.json())
       .then(res => {
-          console.log('Images', res)
+          //console.log('Images', res)
           this.images = res
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
+
+      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/keywords?api_key=${this.api_key}`)
+      .then(d => d.json())
+      .then(res => {
+          console.log('Keywords', res)
+          this.keywords = res.keywords
       })
       .catch(err => {
           console.log(err)
@@ -219,6 +244,7 @@ export default {
 .movie-column-2{
     background: rgb(224, 224, 224);
     width: calc(30vw - 36px);
+    overflow: scroll;
     max-height: calc(100vh - 84px);
     min-height: calc(100vh - 84px);
     margin-left: 12px;
@@ -243,7 +269,7 @@ export default {
 .cast{
     padding: 12px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     grid-gap: 12px;
 }
 .actor img{
@@ -271,7 +297,37 @@ export default {
 }
 .images img{
     width: 100%;
+    display: inline-block;
 }
 
+
+.production-companies{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 4px;
+    align-items: center;
+    padding: 4px;
+}
+.production-companies p{
+    grid-column: 1 / -1;
+}
+.production-companies img{
+    width: 100%;
+}
+
+.keywords{
+    background: none;
+}
+.keywords p{
+    font-weight: bold;
+}
+.keywords span{
+    padding: 4px;
+    border-radius: 4px;
+    background: rgb(170, 167, 167);
+    margin: 2px;
+    font-size: 0.8em;
+    display: inline-block;
+}
 
 </style>
