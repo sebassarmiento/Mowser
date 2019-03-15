@@ -15,7 +15,7 @@ export default {
 footer{
     height: 300px;
     width: 100%;
-    background: linear-gradient(to bottom, white 10%, rgb(177, 202, 248), rgba(216, 39, 39, 0.76), rgba(0, 0, 0, 0.849));
+    background: linear-gradient(to bottom, rgb(255, 255, 255),rgba(136, 136, 136, 0.678), rgba(0, 0, 0, 0.849));
     text-align: center;
     position: relative;
 }

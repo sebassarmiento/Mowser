@@ -7,19 +7,31 @@
           <MovieMenu v-if="cast" v-bind:counts="getCategoryCount()" />
 
           <div v-if="menu.cast && cast" class="cast">
-              <div v-for="actor in cast.filter(a => a.profile_path)" v-bind:key="actor.id" class="actor">
-                  <img v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
+              <h2>Showing {{ castSlice > cast.length ? cast.length : castSlice }} of {{ cast.length }} <span v-if="castSlice <= cast.length" v-on:click="castSlice === 10 ? castSlice = cast.length : castSlice = 10" >{{ castSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+              <div v-for="actor in cast.filter(a => a.profile_path).slice(0, castSlice)" v-bind:key="actor.id" class="actor">
+                  <img v-on:click="redirect(actor.id, 'people')" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
                   <span >{{ actor.character }}</span>
                   <p >{{ actor.name }}</p>
               </div>
           </div>
           
-        <div v-if="menu.videos" class="trailer">
+        <div v-if="menu.videos && videos" class="trailer">
             <iframe v-for="video in videos" v-bind:key="video.key" v-bind:src="`https://www.youtube.com/embed/${video.key}`" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
 
-        <div v-if="menu.images" class="images">
-            <img v-for="image in images.posters" v-bind:key="image.id" v-bind:src="`https://image.tmdb.org/t/p/w154${image.file_path}`" alt="">
+        <div v-if="menu.images && images" class="images">
+              <h2>Showing {{ imagesSlice > images.length ? images.length : imagesSlice }} of {{ images.posters.length }} <span v-if="imagesSlice <= images.posters.length" v-on:click="imagesSlice === 10 ? imagesSlice = images.posters.length : imagesSlice = 10" >{{ imagesSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+            <img v-for="image in images.posters.slice(0, imagesSlice)" v-bind:key="image.id" v-bind:src="`https://image.tmdb.org/t/p/w154${image.file_path}`" alt="">
+        </div>
+
+        <div v-if="menu.reviews && reviews" class="reviews">
+            <h2 class="showing-reviews" >Showing {{ reviewsSlice > reviews.length ? reviews.length : reviewsSlice }} of {{ reviews.length }} <span v-if="reviewsSlice <= reviews.length" v-on:click="reviewsSlice === 10 ? reviewsSlice = reviews.length : reviewsSlice = 10" >{{ reviewsSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+            <div v-for="r in reviews" v-bind:key="r.id" class="review">
+                <div class="review-user">
+                    <i class="fas fa-user" ></i><h2>{{ r.author }}</h2>
+                </div>
+                <p>{{ r.content }}</p>
+            </div>
         </div>
 
           </div>
@@ -28,12 +40,14 @@
               <p>Budget: <i class="fas fa-dollar-sign"></i><span> {{ movie.budget.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
               <p>Revenue: <i class="fas fa-dollar-sign"></i><span> {{ movie.revenue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
               <a v-bind:href="movie.homepage" target="_blank" >Go to website</a>
+              <p>Production companies</p>
               <div class="production-companies" >
-                  <p>Production companies</p>
-                  <img v-for="c in movie.production_companies" v-bind:key="c.id" v-bind:src="`https://image.tmdb.org/t/p/w154${c.logo_path}`" alt="">
+                  <div v-for="c in movie.production_companies.filter(c => c.logo_path)" v-bind:key="c.id" >
+                    <img v-bind:src="`https://image.tmdb.org/t/p/w154${c.logo_path}`" alt="">
+                  </div>
               </div>
-              <p>Vote average: {{ movie.vote_average }}</p>
-              <p>Votes: {{ movie.vote_count }}</p>
+              <p> <i class="fas fa-star" ></i> {{ movie.vote_average }}</p>
+              <p>{{ movie.vote_count }} ratings</p>
               <div class="keywords" >
                   <p>Keywords</p>
                   <span v-for="k in keywords" v-bind:key="k.id" >{{ k.name }}</span>
@@ -72,6 +86,7 @@ export default {
           videos: null,
           cast: null,
           recommended: null,
+          reviews: null,
           images: null,
           keywords: null,
           recommendedScroll: 'recElement',
@@ -82,7 +97,10 @@ export default {
               videos: null,
               credits: null,
               reviews: null
-          }
+          },
+          castSclice: 10,
+          reviewsSlice: 10,
+          imagesSlice: 10
       }
   },
   updated(){
@@ -100,7 +118,7 @@ export default {
               images: this.images ? this.images.posters.length : 0,
               videos: this.videos ? this.videos.length : 0,
               credits: 10,
-              reviews: 10
+              reviews: this.reviews ? this.reviews.length : 0
           }
       },
 
@@ -196,6 +214,16 @@ export default {
           console.log(err)
       })
 
+      fetch(`${this.api_url}/movie/${this.$route.params.movieId}/reviews?api_key=${this.api_key}`)
+      .then(d => d.json())
+      .then(res => {
+          console.log('reviews', res)
+          this.reviews = res.results
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
       }
   },
   mounted(){
@@ -272,9 +300,27 @@ export default {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     grid-gap: 12px;
 }
+.cast h2{
+    grid-column: 1 / -1;
+    font-size: 1em;
+    font-weight: 500;
+}
+.cast h2 span{
+    margin-left: 12px;
+    font-size: 0.8em;
+    color: rgb(33, 78, 201);
+    font-weight: 400;
+    cursor: pointer;
+}
 .actor img{
     display: block;
     width: 100%;
+    transition: all 0.2s ease-in-out;
+}
+.cast img:hover{
+    cursor: pointer;
+    transform: translateY(-10px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 .cast .actor span{
     font-size: 0.9em;
@@ -292,8 +338,20 @@ export default {
 
 .images{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     grid-gap: 12px;
+}
+.images h2{
+    grid-column: 1 / -1;
+    font-size: 1em;
+    font-weight: 500;
+}
+.images h2 span{
+    margin-left: 12px;
+    font-size: 0.8em;
+    color: rgb(33, 78, 201);
+    font-weight: 400;
+    cursor: pointer;
 }
 .images img{
     width: 100%;
@@ -303,7 +361,7 @@ export default {
 
 .production-companies{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
     grid-gap: 4px;
     align-items: center;
     padding: 4px;
@@ -328,6 +386,52 @@ export default {
     margin: 2px;
     font-size: 0.8em;
     display: inline-block;
+}
+
+.review{
+    background: rgb(224, 224, 224);
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 6px;
+}
+.reviews .showing-reviews{
+    font-size: 1em;
+    font-weight: 500;
+}
+.review h2 span{
+    margin-left: 12px;
+    font-size: 0.8em;
+    color: rgb(33, 78, 201);
+    font-weight: 400;
+    cursor: pointer;
+}
+.review .review-user{
+    font-weight: bold;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+}
+.review .review-user h2{
+    margin: 0px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+.review .review-user i{
+    margin-right: 6px;
+    font-weight: normal;
+    height: 30px;
+    width: 30px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.review p{
+    margin-bottom: 0px;
+    line-height: 1.2em;
 }
 
 </style>

@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         select(ele){
-            window.scrollTo(0, window.innerHeight)
+            window.scrollTo(0, window.innerHeight - 60)
             this.current = ele
             this.$parent.selectMenuOption(ele)
         }
@@ -49,7 +49,7 @@ export default {
     width: 100px;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
 }
 .movie-menu-btn:nth-child(1):after{
     content: '';
@@ -79,6 +79,7 @@ export default {
 }
 
 .movie-menu-btn span{
+    margin-left: 12px;
     font-size: 0.8em;
 }
 
