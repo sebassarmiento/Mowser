@@ -3,7 +3,7 @@
     <div v-if="cast" class="cast-container">
           <h2>Cast</h2>
           <div v-bind:ref="scrollElement" class="cast">
-              <div v-for="actor in cast.slice(0, 20)" v-bind:key="actor.name" v-on:click="redirect(actor.id, 'people')" class="actor">
+              <div v-for="actor in cast.slice(0, 40)" v-bind:key="actor.name" v-on:click="redirect(actor.id, 'people')" class="actor">
               <img v-if="actor.profile_path" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
               <span v-if="actor.profile_path" >{{ actor.character }}</span>
               <p v-if="actor.profile_path" >{{ actor.name }}</p>

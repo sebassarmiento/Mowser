@@ -1,17 +1,27 @@
 <template>
   <div v-if="movie" class="movie">
-      <MainMovieInfo v-bind:trailer="trailer ? true : false" v-bind:movie="movie" />
+      <MainMovieInfo v-bind:trailer="videos ? true : false" v-bind:movie="movie" />
       <div class="movie-grid">
           <div class="movie-column-1">
 
-          <MovieMenu />
+          <MovieMenu v-if="cast" v-bind:counts="getCategoryCount()" />
 
-          <CastCarousel v-bind:cast="cast" />
+          <div v-if="menu.cast && cast" class="cast">
+              <div v-for="actor in cast.filter(a => a.profile_path)" v-bind:key="actor.id" class="actor">
+                  <img v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
+                  <span >{{ actor.character }}</span>
+                  <p >{{ actor.name }}</p>
+              </div>
+          </div>
           
-      <div v-if="trailer" class="trailer">
-          <h2>Trailer</h2>
-          <iframe v-bind:src="`https://www.youtube.com/embed/${trailer[0].key}`" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
+        <div v-if="menu.videos" class="trailer">
+            <iframe v-for="video in videos" v-bind:key="video.key" v-bind:src="`https://www.youtube.com/embed/${video.key}`" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <div v-if="menu.images" class="images">
+            <img v-for="image in images.posters" v-bind:key="image.id" v-bind:src="`https://image.tmdb.org/t/p/w154${image.file_path}`" alt="">
+        </div>
+
           </div>
           <div class="movie-column-2">
               <h1>Info</h1>
@@ -46,12 +56,19 @@ export default {
   data(){
       return {
           movie: null,
-          trailer: null,
+          videos: null,
           cast: null,
           recommended: null,
           images: null,
           recommendedScroll: 'recElement',
-          castScroll: 'castElement'
+          castScroll: 'castElement',
+          menu: {
+              cast: true,
+              images: null,
+              videos: null,
+              credits: null,
+              reviews: null
+          }
       }
   },
   updated(){
@@ -62,6 +79,23 @@ export default {
       }
   },
   methods: {
+
+      getCategoryCount(){
+          return {
+              cast: this.cast ? this.cast.length : 0,
+              images: this.images ? this.images.posters.length : 0,
+              videos: this.videos ? this.videos.length : 0,
+              credits: 10,
+              reviews: 10
+          }
+      },
+
+      selectMenuOption(e){
+        for(let k in this.menu) this.menu[k] = false;
+        this.menu = {...this.menu, [e]: true}
+        console.log(this.menu)
+      },
+
       redirect(id, type){
           this.$router.push(`/${type}/id/${id}`)
       },
@@ -95,7 +129,7 @@ export default {
       .then(res => {
           console.log('Videos', res)
           if(res.results.length > 0){
-              this.trailer = res.results
+              this.videos = res.results
           }
       })
       .catch(err => {
@@ -142,6 +176,9 @@ export default {
   mounted(){
       console.log('Mounted')
       this.getData()
+      this.$on('click', () => {
+          console.log('Chooooseeen')
+      })
   },
   watch: {
       '$route' (to, from){
@@ -202,6 +239,39 @@ export default {
     margin: 24px auto;
 }
 
+
+.cast{
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-gap: 12px;
+}
+.actor img{
+    display: block;
+    width: 100%;
+}
+.cast .actor span{
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 4px;
+}
+.cast .actor p{
+    margin-top: 4px;
+    line-height: 1.2em;
+    max-height: 1.2em;
+    overflow: hidden;
+}
+
+
+.images{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-gap: 12px;
+}
+.images img{
+    width: 100%;
+}
 
 
 </style>

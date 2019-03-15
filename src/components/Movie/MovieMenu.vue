@@ -1,16 +1,17 @@
 <template>
     <div class="movie-menu">
-        <div v-on:click="select('cast')" class="movie-menu-btn" v-bind:class="current" >Cast</div>
-        <div v-on:click="select('images')" class="movie-menu-btn" >Images</div>
-        <div v-on:click="select('videos')" class="movie-menu-btn" >Videos</div>
-        <div v-on:click="select('reviews')" class="movie-menu-btn" >Reviews</div>
-        <div v-on:click="select('credits')" class="movie-menu-btn" >Credits</div>
+        <div v-on:click="select('cast')" class="movie-menu-btn" v-bind:class="current" >Cast <span>({{ counts.cast }})</span></div>
+        <div v-on:click="select('images')" class="movie-menu-btn" >Images <span>({{ counts.images }})</span></div>
+        <div v-on:click="select('videos')" class="movie-menu-btn" >Videos <span>({{ counts.videos }})</span></div>
+        <div v-on:click="select('reviews')" class="movie-menu-btn" >Reviews <span>({{ counts.reviews }})</span></div>
+        <div v-on:click="select('credits')" class="movie-menu-btn" >Credits <span>({{ counts.credits }})</span></div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'MovieMenu',
+    props: ['counts'],
     data(){
         return {
             current: 'cast'
@@ -18,9 +19,13 @@ export default {
     },
     methods: {
         select(ele){
+            window.scrollTo(0, window.innerHeight)
             this.current = ele
-            console.log('Click', this.current)
+            this.$parent.selectMenuOption(ele)
         }
+    },
+    mounted() {
+        console.log(this.$props)
     }
 }
 </script>
@@ -43,7 +48,8 @@ export default {
     cursor: pointer;
     width: 100px;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-evenly;
 }
 .movie-menu-btn:nth-child(1):after{
     content: '';
@@ -70,6 +76,10 @@ export default {
 }
 .movie-menu .movie-menu-btn.credits::after{
     transform: translateX(400px);
+}
+
+.movie-menu-btn span{
+    font-size: 0.8em;
 }
 
 
