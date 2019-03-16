@@ -2,6 +2,11 @@
   <div v-if="movie" class="movie">
       <MainMovieInfo v-bind:trailer="videos ? true : false" v-bind:movie="movie" />
       <div class="movie-grid">
+          <div v-if="movie.production_companies" class="companies">
+              <div class="company" v-for="c in movie.production_companies.filter(c => c.logo_path)" v-bind:key="c.id" >
+                    <img v-bind:src="`https://image.tmdb.org/t/p/w154${c.logo_path}`" alt="">
+              </div>
+          </div>
           <div class="movie-column-1">
 
           <MovieMenu v-if="cast" v-bind:counts="getCategoryCount()" />
@@ -42,15 +47,8 @@
           <div class="movie-column-2">
               <p>Budget: <i class="fas fa-dollar-sign"></i><span> {{ movie.budget.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
               <p>Revenue: <i class="fas fa-dollar-sign"></i><span> {{ movie.revenue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }}</span></p>
-              <a v-bind:href="movie.homepage" target="_blank" class="movie-website" >Website</a>
-              <p>Production companies</p>
-              <div class="production-companies" >
-                  <div v-for="c in movie.production_companies.filter(c => c.logo_path)" v-bind:key="c.id" >
-                    <img v-bind:src="`https://image.tmdb.org/t/p/w154${c.logo_path}`" alt="">
-                  </div>
-              </div>
-              <p> <i class="fas fa-star" ></i> {{ movie.vote_average }}</p>
-              <p>{{ movie.vote_count }} ratings</p>
+              <a v-if="movie.homepage" v-bind:href="movie.homepage" target="_blank" class="movie-website" >Website</a>
+              <p class="ratings" > <i class="fas fa-star" ></i> {{ movie.vote_average }} <span>({{ movie.vote_count }} ratings)</span></p>
               <div class="keywords" >
                   <p>Keywords</p>
                   <span v-for="k in keywords" v-bind:key="k.id" >{{ k.name }}</span>
@@ -108,6 +106,7 @@ export default {
   },
   updated(){
       console.log("UPDATED!!")
+      console.log(this._data)
       if(this.recommended && this.cast){
           this.recommendedScroll = 'recElement'
           this.castScroll = 'castElement'
@@ -148,7 +147,6 @@ export default {
       },
 
       fetchData(param, key, resultKey){
-          console.log(`${this.api_url}/movie/${this.$route.params.movieId}${param ? `/${param}` : ''}?api_key=${this.api_key}`)
           fetch(`${this.api_url}/movie/${this.$route.params.movieId}${param ? `/${param}` : ''}?api_key=${this.api_key}`)
           .then(d => d.json())
           .then(res => {
@@ -161,7 +159,7 @@ export default {
 
       getData(){
 
-        this.fetchData( null,'movie')
+        this.fetchData(null, 'movie')
 
         this.fetchData('videos', 'videos', 'results')
 
@@ -175,6 +173,21 @@ export default {
 
         this.fetchData('reviews','reviews', 'results')
 
+      },
+
+      keyToKeep(k){
+          switch(k){
+              case 'menu':
+              return false
+              case 'castSlice':
+              return false
+              case 'imagesSlice':
+              return false
+              case 'reviewsSlice':
+              return false
+              default:
+              return true
+          }
       }
   },
   mounted(){
@@ -185,10 +198,11 @@ export default {
       '$route' (to, from){
           console.log('Route changed', from, to)
           for(let k in this._data){
-              if(this._data.hasOwnProperty(k)){
+              if(this._data.hasOwnProperty(k) && this.keyToKeep(k) ){
                   this[k] = null
               }
           }
+          console.log('HEre!!!', this._data)
           window.scrollTo(0, 0)
           this.getData()
       }
@@ -214,6 +228,21 @@ export default {
     transform: translate(-50%, -50%);
 }
 
+.companies{
+    grid-column: 1 / -1;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(236, 169, 236);
+}
+.companies .company{
+    margin: 0px 12px;
+}
+.companies .company img{
+    min-height: 30px;
+    max-height: 50px;
+}
 
 .movie-grid{
     padding: 12px;
@@ -324,19 +353,11 @@ export default {
 }
 
 
-.production-companies{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    grid-gap: 4px;
-    align-items: center;
-    padding: 4px;
+.ratings span{
+    font-size: 0.8em;
+    margin: 0px 2px;
 }
-.production-companies p{
-    grid-column: 1 / -1;
-}
-.production-companies img{
-    width: 100%;
-}
+
 
 .keywords{
     background: none;
