@@ -8,33 +8,24 @@
             </div>
         </div>
         <div class="person-info">
-            <h3>Biography</h3>
-            <p class="biography" >{{ person.biography }}</p>
-            <h3>Photos</h3>
-            <div v-if="photos" class="photos">
-                <div v-for="(p, i) in photos" v-bind:key="i" class="photo" >
-                    <img v-bind:src="`https://image.tmdb.org/t/p/w500${p.file_path}`" alt="">
+            <PersonMenu v-bind:data="{movies, photos, biography: person.biography}" />
+            <div v-if="menu.biography" >
+                <h3>Biography</h3>
+                <p class="biography" >{{ person.biography }}</p>
+            </div>
+            <div v-if="menu.photos && photos" >
+                <h3>Photos</h3>
+                <div class="photos">
+                    <div v-for="(p, i) in photos" v-bind:key="i" class="photo" >
+                        <img v-bind:src="`https://image.tmdb.org/t/p/w500${p.file_path}`" alt="">
+                    </div>
                 </div>
             </div>
-            <h3>Movies</h3>
-            <div v-if="movies" >
-                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
-            </div>
-            <h3>Movies</h3>
-            <div v-if="movies" >
-                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
-            </div>
-            <h3>Movies</h3>
-            <div v-if="movies" >
-                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
-            </div>
-            <h3>Movies</h3>
-            <div v-if="movies" >
-                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
-            </div>
-            <h3>Movies</h3>
-            <div v-if="movies" >
-                <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+            <div v-if="menu.movies && movies" >
+                <h3>Movies</h3>
+                <div >
+                    <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+                </div>
             </div>
         </div>
     </div>
@@ -45,18 +36,25 @@
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
 import FeedGrid from '@/components/FeedGrid.vue'
+import PersonMenu from '@/components/Person/PersonMenu.vue'
 
 export default {
     name: 'People',
     components: {
         Loader,
-        FeedGrid
+        FeedGrid,
+        PersonMenu
     },
     data(){
         return {
             person: null,
             movies: null,
-            photos: null
+            photos: null,
+            menu: {
+                biography: true,
+                photos: false,
+                movies: false
+            }
         }
     },
     methods: {
@@ -65,6 +63,10 @@ export default {
             let now = new Date().getFullYear()
 
             return now - year;
+        },
+        selectMenuOption(option){
+            for(let k in this.menu) this.menu[k] = false;
+            this.menu = {...this.menu, [option]: true}
         }
     },
     mounted(){
@@ -114,12 +116,12 @@ p, h2, h3{
 .person-profile{
     padding: 12px;
     min-width: 26vw;
+    max-width: 26vw;
     min-height: calc(100vh - 84px);
     max-height: calc(100vh - 84px);
     position: sticky;
     top: 72px;
     left: 0px;
-    background: red;
 }
 .person-profile img{
     width: 100%;
@@ -130,8 +132,8 @@ p, h2, h3{
 
 .person-info{
     padding: 12px;
-    background: green;
     max-width: calc(74vw - 24px);
+    min-width: calc(74vw - 24px);
 }
 .person-info h3{
     font-size: 1.4em;
