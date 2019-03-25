@@ -14,7 +14,6 @@
                 <p class="biography" >{{ person.biography }}</p>
             </div>
             <div v-if="menu.photos && photos" >
-                <h3>Photos</h3>
                 <div class="photos">
                     <div v-for="(p, i) in photos" v-bind:key="i" class="photo" >
                         <img v-bind:src="`https://image.tmdb.org/t/p/w500${p.file_path}`" alt="">
@@ -22,9 +21,12 @@
                 </div>
             </div>
             <div v-if="menu.movies && movies" >
-                <h3>Movies</h3>
-                <div >
-                    <FeedGrid v-bind:movies="movies" v-bind:limit="10" />
+                <div class="person-movies" >
+                    <div v-for="movie in movies" v-bind:key="movie.id" class="movie" >
+                        <img v-on:click="redirect('movie', movie.id)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
+                        <h4>{{ movie.title }}</h4>
+                        <p>{{ movie.release_date ? timeAgo(movie.release_date) : null }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,6 +39,8 @@ import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
 import FeedGrid from '@/components/FeedGrid.vue'
 import PersonMenu from '@/components/Person/PersonMenu.vue'
+import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
+import timeAgo from '@/utils/timeAgo'
 
 export default {
     name: 'People',
@@ -47,6 +51,7 @@ export default {
     },
     data(){
         return {
+            ImagePlaceholder,
             person: null,
             movies: null,
             photos: null,
@@ -67,6 +72,15 @@ export default {
         selectMenuOption(option){
             for(let k in this.menu) this.menu[k] = false;
             this.menu = {...this.menu, [option]: true}
+        },
+        timeAgo(date){
+            let myDate = date.split('-')
+            myDate = myDate.map(d => parseFloat(d))
+            return timeAgo(myDate)
+        },
+        redirect(type, id){
+            console.log(id)
+            this.$router.push(`/${type}/id/${id}`)
         }
     },
     mounted(){
@@ -110,13 +124,15 @@ p, h2, h3{
 
 .person-container{
     display: flex;
-    padding: 12px;
+    padding: 0px;
+    min-height: calc(100vh - 60px);
 }
 
 .person-profile{
     padding: 12px;
-    min-width: 26vw;
-    max-width: 26vw;
+    padding-top: 0px;
+    min-width: 260px;
+    max-width: 260px;
     min-height: calc(100vh - 84px);
     max-height: calc(100vh - 84px);
     position: sticky;
@@ -125,15 +141,17 @@ p, h2, h3{
 }
 .person-profile img{
     width: 100%;
-    max-height: 400px;
+    height: auto;
     border-radius: 12px;
+    margin-top: 0px;
     margin-bottom: 12px;
 }
 
 .person-info{
     padding: 12px;
-    max-width: calc(74vw - 24px);
-    min-width: calc(74vw - 24px);
+    min-width: calc(100vw - 260px);
+    max-width: calc(100vw - 260px);
+    background: white;
 }
 .person-info h3{
     font-size: 1.4em;
@@ -141,6 +159,7 @@ p, h2, h3{
 }
 .biography{
     margin: 0px;
+    margin-top: 12px;
     font-size: 1em;
     line-height: 1.2em;
     margin-bottom: 24px;
@@ -151,12 +170,48 @@ p, h2, h3{
     grid-gap: 24px;
     grid-template-columns: repeat(auto-fit, minmax(120px, 140px));
     margin-bottom: 24px;
+    margin-top: 12px;
 }
 .photos img{
     width: 100%;
     border-radius: 8px;
     margin: 0px auto;
     display: block;
+}
+
+.person-movies{
+    background: green;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    margin-top: 12px;
+}
+.person-movies .movie{
+    min-width: 220px;
+    border-radius: 6px;
+    margin: 12px 2px;
+}
+.person-movies img{
+    border-radius: 0px;
+    width: 100%;
+    box-shadow: 0px 35px 30px -30px rgba(0, 0, 0, 0.411);
+    opacity: 0.9;
+    transition: all 0.2s ease-in-out;
+}
+.person-movies img:hover{
+  opacity: 1;
+  cursor: pointer;
+}
+.person-movies h4{
+  margin: 0px 0px;
+  font-size: 0.9em;
+  text-align: left;
+  cursor: pointer;
+}
+.person-movies p{
+  margin: 0px;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.486);
 }
 
 </style>

@@ -22,6 +22,7 @@
           </div>
           
         <div v-if="menu.videos && videos" class="trailer">
+            <h2 v-if="videos.length === 0" class="no-elements" >No videos to show</h2>
             <iframe v-for="video in videos" v-bind:key="video.key" v-bind:src="`https://www.youtube.com/embed/${video.key}`" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
 

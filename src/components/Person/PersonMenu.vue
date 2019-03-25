@@ -35,7 +35,7 @@ export default {
 .person-menu{
     width: calc(100% + 24px);
     height: 60px;
-    background: rgb(233, 233, 233);
+    background: white;
     margin-left: -12px;
     margin-top: -12px;
     align-items: center;
@@ -44,6 +44,7 @@ export default {
     position: sticky;
     top: 60px;
     left: 0;
+    z-index: 2;
 }
 
 .person-menu .person-menu-btn{
