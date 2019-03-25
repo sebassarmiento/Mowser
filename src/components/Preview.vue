@@ -1,6 +1,6 @@
 <template>
     <div v-if="currentPreview" class="preview">
-        <img v-bind:src="`https://image.tmdb.org/t/p/w1280/${currentPreview.poster_path}`" alt="">
+        <img v-if="currentPreview.poster_path" v-bind:src="`https://image.tmdb.org/t/p/w1280/${currentPreview.poster_path}`" alt="">
         <div class="preview-info">
             <div class="rating" ><i class="fas fa-star"></i>{{currentPreview.vote_average}}</div>
             <h2>{{ currentPreview.title }}</h2>

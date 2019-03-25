@@ -45,7 +45,6 @@ export default {
         },
 
         timeAgo(date){
-          console.log('Date',date)
             let myDate = date.split('-')
             myDate = myDate.map(d => parseFloat(d))
             return timeAgo(myDate)

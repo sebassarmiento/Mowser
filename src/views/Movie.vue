@@ -198,7 +198,7 @@ export default {
       '$route' (to, from){
           console.log('Route changed', from, to)
           for(let k in this._data){
-              if(this._data.hasOwnProperty(k) && this.keyToKeep(k) ){
+              if(this._data.hasOwnProperty(k) && this.keyToKeep(k)){
                   this[k] = null
               }
           }
