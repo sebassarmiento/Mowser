@@ -209,6 +209,7 @@ export default {
   mounted(){
       console.log('Mounted')
       this.getData()
+      window.scrollTo(0, 0)
   },
   watch: {
       '$route' (to, from){

@@ -8,19 +8,20 @@
             </div>
         </div>
         <div class="person-info">
-            <PersonMenu v-bind:data="{movies, photos, biography: person.biography}" />
-            <div v-if="menu.biography" >
+            <div v-if="person.biography" >
                 <h3>Biography</h3>
                 <p class="biography" >{{ person.biography }}</p>
             </div>
-            <div v-if="menu.photos && photos" >
+            <div v-if="photos" class="photos-container" >
+                <h3>Photos</h3>
                 <div class="photos">
                     <div v-for="(p, i) in photos" v-bind:key="i" class="photo" >
                         <img v-bind:src="`https://image.tmdb.org/t/p/w500${p.file_path}`" alt="">
                     </div>
                 </div>
             </div>
-            <div v-if="menu.movies && movies" >
+            <div v-if="movies" class="movies-container" >
+                <h3>Movies</h3>
                 <div class="person-movies" >
                     <div v-for="movie in movies" v-bind:key="movie.id" class="movie" >
                         <img v-on:click="redirect('movie', movie.id)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
@@ -54,12 +55,7 @@ export default {
             ImagePlaceholder,
             person: null,
             movies: null,
-            photos: null,
-            menu: {
-                biography: true,
-                photos: false,
-                movies: false
-            }
+            photos: null
         }
     },
     methods: {
@@ -68,10 +64,6 @@ export default {
             let now = new Date().getFullYear()
 
             return now - year;
-        },
-        selectMenuOption(option){
-            for(let k in this.menu) this.menu[k] = false;
-            this.menu = {...this.menu, [option]: true}
         },
         timeAgo(date){
             let myDate = date.split('-')
@@ -149,6 +141,7 @@ p, h2, h3{
 
 .person-info{
     padding: 12px;
+    padding-top: 0px;
     min-width: calc(100vw - 260px);
     max-width: calc(100vw - 260px);
     background: white;
@@ -165,6 +158,10 @@ p, h2, h3{
     margin-bottom: 24px;
 }
 
+
+.photos-container{
+    padding-top: 24px;
+}
 .photos{
     display: grid;
     grid-gap: 24px;
@@ -179,6 +176,9 @@ p, h2, h3{
     display: block;
 }
 
+.movies-container{
+    padding-top: 24px;
+}
 .person-movies{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
