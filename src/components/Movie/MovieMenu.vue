@@ -4,7 +4,7 @@
         <div v-on:click="select('images')" class="movie-menu-btn" >Images <span>({{ counts.images }})</span></div>
         <div v-on:click="select('videos')" class="movie-menu-btn" >Videos <span>({{ counts.videos }})</span></div>
         <div v-on:click="select('reviews')" class="movie-menu-btn" >Reviews <span>({{ counts.reviews }})</span></div>
-        <div v-on:click="select('credits')" class="movie-menu-btn" >Credits <span>({{ counts.credits }})</span></div>
+        <div v-on:click="select('crew')" class="movie-menu-btn" >Crew <span>({{ counts.crew }})</span></div>
     </div>
 </template>
 
@@ -74,7 +74,7 @@ export default {
 .movie-menu .movie-menu-btn.reviews::after{
     transform: translateX(300px);
 }
-.movie-menu .movie-menu-btn.credits::after{
+.movie-menu .movie-menu-btn.crew::after{
     transform: translateX(400px);
 }
 

@@ -20,6 +20,16 @@
                   <p >{{ actor.name }}</p>
               </div>
           </div>
+
+          <div v-if="menu.crew && crew" class="cast">
+              <h2 v-if="crew.length > 0" >Showing {{ crewSlice > crew.length ? crew.length : crewSlice }} of {{ crew.length }} <span v-if="crewSlice <= crew.length" v-on:click="crewSlice === 10 ? crewSlice = crew.length : crewSlice = 10" >{{ crewSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
+              <h2 v-else class="no-elements" >No crew to show</h2>
+              <div v-for="actor in crew.filter(a => a.profile_path).slice(0, crewSlice)" v-bind:key="actor.id" class="actor">
+                  <img v-on:click="redirect(actor.id, 'people')" v-bind:src="`https://image.tmdb.org/t/p/w154${actor.profile_path}`" alt="">
+                  <span >{{ actor.character }}</span>
+                  <p >{{ actor.name }}</p>
+              </div>
+          </div>
           
         <div v-if="menu.videos && videos" class="trailer">
             <h2 v-if="videos.length === 0" class="no-elements" >No videos to show</h2>
@@ -87,6 +97,7 @@ export default {
           movie: null,
           videos: null,
           cast: null,
+          crew: null,
           recommended: null,
           reviews: null,
           images: null,
@@ -102,7 +113,8 @@ export default {
           },
           castSlice: 10,
           reviewsSlice: 10,
-          imagesSlice: 10
+          imagesSlice: 10,
+          crewSlice: 10
       }
   },
   updated(){
@@ -110,7 +122,6 @@ export default {
       console.log(this._data)
       if(this.recommended && this.cast){
           this.recommendedScroll = 'recElement'
-          this.castScroll = 'castElement'
       }
   },
   methods: {
@@ -120,7 +131,7 @@ export default {
               cast: this.cast ? this.cast.length : 0,
               images: this.images ? this.images.posters.length : 0,
               videos: this.videos ? this.videos.length : 0,
-              credits: 10,
+              crew: this.crew ? this.crew.length : 0,
               reviews: this.reviews ? this.reviews.length : 0
           }
       },
@@ -166,6 +177,8 @@ export default {
 
         this.fetchData('credits', 'cast', 'cast')
 
+        this.fetchData('credits', 'crew', 'crew')
+
         this.fetchData('recommendations', 'recommended', 'results')
 
         this.fetchData('images', 'images')
@@ -185,6 +198,8 @@ export default {
               case 'imagesSlice':
               return false
               case 'reviewsSlice':
+              return false
+              case 'crewSlice':
               return false
               default:
               return true
