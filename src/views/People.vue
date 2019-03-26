@@ -180,7 +180,6 @@ p, h2, h3{
 }
 
 .person-movies{
-    background: green;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     margin-top: 12px;
