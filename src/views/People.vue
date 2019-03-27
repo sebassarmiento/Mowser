@@ -48,7 +48,7 @@
 <script>
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
-import FeedGrid from '@/components/FeedGrid.vue'
+import FeedGrid from '@/components/Home/FeedGrid.vue'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
 import timeAgo from '@/utils/timeAgo'
 

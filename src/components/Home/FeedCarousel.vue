@@ -5,7 +5,7 @@
         <h2>{{ current.title }}</h2>
         <p><span>{{ current.release_date.split('-').join('/') }}</span><i class="fas fa-star"></i>{{ current.vote_average }}</p>
       </div>
-      <div class="bg"></div>
+      <div v-on:click="redirect(current.id)" class="bg"></div>
     </div>
 </template>
 
@@ -27,6 +27,9 @@ export default {
                 this.index = this.index < 2 ? this.index + 1 : 0
                 this.current = this.movies[this.index]
             }, 7000)
+        },
+        redirect(id){
+          this.$router.push(`/movie/id/${id}`)
         }
     },
     mounted(){
@@ -100,6 +103,7 @@ export default {
     background: black;
     opacity: 0.4;
     animation: bg 7s linear infinite 0s;
+    cursor: pointer;
 }
 @keyframes bg {
     0%{

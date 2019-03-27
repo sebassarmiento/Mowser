@@ -14,11 +14,11 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import moment from 'moment'
-import FeedCarousel from '@/components/FeedCarousel.vue'
+import FeedCarousel from '@/components/Home/FeedCarousel.vue'
 import Loader from '@/components/Loader.vue'
 import timeAgo from '@/utils/timeAgo.js'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
-import FeedGrid from '@/components/FeedGrid.vue'
+import FeedGrid from '@/components/Home/FeedGrid.vue'
 
 export default {
   name: 'Feed',

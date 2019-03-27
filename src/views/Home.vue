@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Feed from '@/components/Feed.vue'
+import Feed from '@/components/Home/Feed.vue'
 import AppMenu from '@/components/AppMenu.vue'
 import Preview from '@/components/Preview.vue'
 
