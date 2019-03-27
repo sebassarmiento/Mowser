@@ -24,9 +24,11 @@
                 <div class="movie-header" >
                     <h3>Movies</h3>
                     <div class="sort-movies">
-                        <select >
-                            <option value="">Date</option>
-                            <option value="">Rating</option>
+                        <select v-on:change="sortMovies" >
+                            <option value="new">Newest</option>
+                            <option value="old">Oldest</option>
+                            <option value="top">Top rated</option>
+                            <option value="less">Less rated</option>
                         </select>
                     </div>
                 </div>
@@ -77,8 +79,29 @@ export default {
             return timeAgo(myDate)
         },
         redirect(type, id){
-            console.log(id)
             this.$router.push(`/${type}/id/${id}`)
+        },
+
+        sortMovies(e){
+            let val = e.target.value
+            let timeStamp = date => new Date(date.split('-').map(d => parseFloat(d)).join('.')).getTime()
+        
+            switch(val){
+                case 'new':
+                this.movies = this.movies.filter(m => m.release_date).sort((a, b) => timeStamp(b.release_date) - timeStamp(a.release_date))
+                break;
+                case 'old':
+                this.movies = this.movies.filter(m => m.release_date).sort((a, b) => timeStamp(a.release_date) - timeStamp(b.release_date))
+                break;
+                case 'top':
+                this.movies = this.movies.sort((a, b) => b.vote_average - a.vote_average)
+                break;
+                case 'less':
+                this.movies = this.movies.sort((a, b) => a.vote_average - b.vote_average)
+                break;
+                default:
+                return null
+            }
         }
     },
     mounted(){
@@ -110,7 +133,7 @@ export default {
     },
     computed: {
       ...mapState(['api_url', 'api_key'])
-  }
+    }
 }
 </script>
 
