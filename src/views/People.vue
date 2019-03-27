@@ -21,7 +21,15 @@
                 </div>
             </div>
             <div v-if="movies" class="movies-container" >
-                <h3>Movies</h3>
+                <div class="movie-header" >
+                    <h3>Movies</h3>
+                    <div class="sort-movies">
+                        <select >
+                            <option value="">Date</option>
+                            <option value="">Rating</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="person-movies" >
                     <div v-for="movie in movies" v-bind:key="movie.id" class="movie" >
                         <img v-on:click="redirect('movie', movie.id)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
@@ -39,7 +47,6 @@
 import { mapState } from 'vuex'
 import Loader from '@/components/Loader.vue'
 import FeedGrid from '@/components/FeedGrid.vue'
-import PersonMenu from '@/components/Person/PersonMenu.vue'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
 import timeAgo from '@/utils/timeAgo'
 
@@ -47,8 +54,7 @@ export default {
     name: 'People',
     components: {
         Loader,
-        FeedGrid,
-        PersonMenu
+        FeedGrid    
     },
     data(){
         return {
@@ -176,6 +182,36 @@ p, h2, h3{
     display: block;
 }
 
+
+.movie-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 12px;
+}
+.movie-header .sort-movies{
+    width: 100px;
+    height: 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    padding: 0px 12px;
+    box-sizing: content-box;
+    border: 2px solid rgb(224, 224, 224);
+}
+.movie-header select{
+    background: rgb(224, 224, 224);
+    padding: 12px;
+    font-size: 0.9em;
+    border: 2px solid rgb(224, 224, 224);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    font-weight: 600;
+    color: rgb(77, 75, 75);
+}
 .movies-container{
     padding-top: 24px;
 }

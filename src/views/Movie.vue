@@ -2,7 +2,7 @@
   <div v-if="movie" class="movie">
       <MainMovieInfo v-bind:trailer="videos ? true : false" v-bind:movie="movie" />
       <div class="movie-grid">
-          <div v-if="movie.production_companies" class="companies">
+          <div v-if="movie.production_companies.length > 0" class="companies">
               <div class="company" v-for="c in movie.production_companies.filter(c => c.logo_path)" v-bind:key="c.id" >
                     <img v-bind:src="`https://image.tmdb.org/t/p/w154${c.logo_path}`" alt="">
               </div>
