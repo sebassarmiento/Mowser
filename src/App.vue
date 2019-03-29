@@ -47,4 +47,9 @@ body{
     background: transparent;  /* optional: just make scrollbar invisible */
 }
 
+.hidden-arrow{
+  transform: scale(0);
+  transition: all 0.15s ease-in-out;
+}
+
 </style>
