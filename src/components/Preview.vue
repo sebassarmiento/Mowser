@@ -35,9 +35,15 @@ export default {
     min-width: 260px;
     height: calc(100vh - 60px);
     max-height: calc(100vh - 60px);
-    overflow: scroll;
+    overflow: auto;
     transition: all 0.3s ease-in-out;
     animation: showPreview1 0.3s ease-in-out;
+    position: sticky;
+    display: inline-block;
+    vertical-align: top;
+    top: 60px;
+    right: 0px;
+    z-index: 10;
 }
 .preview img{
     width: 100%;

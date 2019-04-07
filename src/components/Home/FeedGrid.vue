@@ -6,7 +6,7 @@
         <h4>{{ movie.title }}</h4>
         <p>{{ movie.release_date ? timeAgo(movie.release_date) : null }}</p>
       </div>
-      <i v-on:click="handleScroll('left')" class="fas fa-long-arrow-alt-left scroll-btn left"></i>
+      <i v-on:click="handleScroll('left')" class="fas fa-long-arrow-alt-left scroll-btn left hidden-arrow"></i>
       <i v-on:click="handleScroll('right')" class="fas fa-long-arrow-alt-right scroll-btn right"></i>
     </div>
     </div>
@@ -63,6 +63,9 @@ export default {
               handleScroll(this.$refs.scrollElement, dir)
         },
 
+    },
+    mounted(){
+      this.loadPreview(0)
     }
 }
 </script>
@@ -125,6 +128,7 @@ export default {
     position: absolute;
     cursor: pointer;
     z-index: 2;
+    transition: all 0.15s ease-in-out;
 }
 .scroll-btn.right{
     top: 50px;

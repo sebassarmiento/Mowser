@@ -6,6 +6,7 @@
           <input placeholder="Search" type="text">
       </div>
       <div class="navbar-menu" >
+        <router-link to="/search" ><i class="fas fa-search"></i></router-link>
         <router-link to="/home" ><i class="fas fa-home"></i></router-link>
         <router-link to="/about" ><i class="fas fa-user-circle"></i></router-link>
       </div>
@@ -22,8 +23,9 @@ export default {
 
 #nav{
     height: 60px;
+    width: 100%;
     display: flex;
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     background: white;

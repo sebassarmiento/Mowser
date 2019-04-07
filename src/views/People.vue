@@ -20,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="movies" class="movies-container" >
+            <div v-if="movies && movies.length > 0" class="movies-container" >
                 <div class="movie-header" >
                     <h3>Movies</h3>
                     <div class="sort-movies">
@@ -127,6 +127,7 @@ export default {
         .then(res => {
             console.log('Credits' ,res)
             this.movies = res.cast
+            console.log(this.movies.length)
         })
         .catch(err => console.log(err))
 

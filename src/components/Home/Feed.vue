@@ -1,13 +1,20 @@
 <template>
   <div class="feed">
     <FeedCarousel v-if="carousel" v-bind:movies="carousel" />
-    <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
-    <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="20" />
-    <h1 v-if="top_rated" >Top Rated <span v-on:click="seeAll('top_rated')" >See all</span></h1>
-    <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="20" />
-    <h1 v-if="upcoming" >Upcoming <span v-on:click="seeAll('upcoming')" >See all</span></h1>
-    <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="20" />
-    <Loader v-else-if="!now_playing" />
+
+    <div class="feed-movies">
+      <div class="feed-column-1">
+      <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
+      <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="20" />
+      <h1 v-if="top_rated" >Top Rated <span v-on:click="seeAll('top_rated')" >See all</span></h1>
+      <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="20" />
+      <h1 v-if="upcoming" >Upcoming <span v-on:click="seeAll('upcoming')" >See all</span></h1>
+      <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="20" />
+      </div>
+      <Preview />
+    </div>
+
+    <Loader v-if="!now_playing" />
   </div>
 </template>
 
@@ -19,12 +26,14 @@ import Loader from '@/components/Loader.vue'
 import timeAgo from '@/utils/timeAgo.js'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
 import FeedGrid from '@/components/Home/FeedGrid.vue'
+import Preview from '@/components/Preview.vue'
 
 export default {
   name: 'Feed',
   components: {
     FeedCarousel,
     Loader,
+    Preview,
     ImagePlaceholder,
     FeedGrid
   },
@@ -97,10 +106,13 @@ export default {
   width: 100%;
   height: calc(100vh - 60px);
   max-height: calc(100vh - 60px);
-  overflow: scroll;
   position: relative;
 }
 
+.feed-column-1{
+  display: inline-block;
+  max-width: calc(100vw - 260px);
+}
 
 .feed h1{
   padding: 12px;

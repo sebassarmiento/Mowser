@@ -48,6 +48,7 @@ export default {
   background: black;
   color: white;
   max-height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px);
   overflow: hidden;
 }
 .carousel img{
@@ -59,9 +60,22 @@ export default {
 }
 .carousel .info{
   position: absolute;
-  top: calc(100% - 24px);
+  top: calc(100% - 32px);
   transform: translateY(-100%);
-  left: 24px;
+  left: 32px;
+  font-size: 1.3em;
+}
+.carousel .info::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.377);
+  border-radius: 30px;
+  filter: blur(40px);
+  z-index: -1;
 }
 .carousel h2{
   color: white;

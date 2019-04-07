@@ -66,7 +66,7 @@
               </div>
           </div>
       </div>
-        <MovieCarousel v-if="recommended.length > 0" v-bind:movies="recommended" />
+        <MovieCarousel v-if="recommended && recommended.length > 0" v-bind:movies="recommended" />
       <Footer />
   </div>
   <Loader v-else />

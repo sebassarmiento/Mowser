@@ -7,7 +7,6 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import AppMenu from '@/components/AppMenu.vue'
 
 export default {
   name: 'App',
@@ -33,6 +32,7 @@ a{
 
 body{
   margin: 0px;
+  padding-top: 60px;
 }
 
 #app {
@@ -49,7 +49,6 @@ body{
 
 .hidden-arrow{
   transform: scale(0);
-  transition: all 0.15s ease-in-out;
 }
 
 </style>
