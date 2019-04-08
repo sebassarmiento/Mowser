@@ -57,7 +57,9 @@ export default {
     },
     methods: {
         handleSearch(){
-            console.log(this.keyword)
+            this.$parent.search({
+                keyword: this.keyword
+            })
         }
     }
 }

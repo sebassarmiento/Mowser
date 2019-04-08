@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import Movie from './views/Movie.vue'
 import People from './views/People.vue'
 import Search from './views/Search.vue'
+import Discover from './views/Discover.vue'
 
 Vue.use(Router)
 

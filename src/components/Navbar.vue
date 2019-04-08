@@ -3,7 +3,7 @@
       <router-link class="brand" to="/" ><i class="fas fa-film"></i>Mowser</router-link>
       <div class="navbar-search">
           <i class="fas fa-search"></i>
-          <input placeholder="Search" type="text">
+          <input placeholder="Search" type="text" v-model="query" v-on:keydown="handleSearch" >
       </div>
       <div class="navbar-menu" >
         <router-link to="/search" ><i class="fas fa-search"></i></router-link>
@@ -15,7 +15,19 @@
 
 <script>
 export default {
-    name: 'Navbar'
+    name: 'Navbar',
+    data(){
+        return {
+            query: ''
+        }
+    },
+    methods: {
+        handleSearch(e){
+            if(e.keyCode === 13){
+                this.$router.push(`/search?query=${this.query}`)
+            }
+        }
+    }
 }
 </script>
 
