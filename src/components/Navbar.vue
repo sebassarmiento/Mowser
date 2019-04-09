@@ -6,9 +6,8 @@
           <input placeholder="Search" type="text" v-model="query" v-on:keydown="handleSearch" >
       </div>
       <div class="navbar-menu" >
-        <router-link to="/search" ><i class="fas fa-search"></i></router-link>
-        <router-link to="/home" ><i class="fas fa-home"></i></router-link>
-        <router-link to="/about" ><i class="fas fa-user-circle"></i></router-link>
+        <router-link to="/search" class="search-item" >Search <i class="fas fa-search"></i></router-link>
+        <router-link to="/" >Home <i class="fas fa-home"></i></router-link>
       </div>
     </div>
 </template>
@@ -24,6 +23,7 @@ export default {
     methods: {
         handleSearch(e){
             if(e.keyCode === 13){
+                console.log('Se llama')
                 this.$router.push(`/search?query=${this.query}`)
             }
         }
@@ -54,6 +54,8 @@ export default {
     justify-content: flex-start;
     padding: 12px;
     min-width: 260px;
+    position: relative;
+    font-weight: bold;
 }
 .brand i{
     padding: 12px;
@@ -100,21 +102,41 @@ export default {
     align-items: center;
     justify-content: flex-end;
     padding: 12px;
-    font-size: 1.4em;
+    font-size: 1em;
 }
 .navbar-menu i{
-    margin: 0px 12px;
+    margin-left: 6px;
+    margin-top: -3px;
 }
 
-#nav a {
+.navbar-menu a {
   font-weight: bold;
   color: #2c3e50;
+  position: relative;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px;
+  padding: 12px;
 }
 
-/*
-#nav a.router-link-exact-active {
-  color: #42b983;
-}*/
+.navbar-menu a.router-link-exact-active {
+  color: #4293b9;
+}
+.navbar-menu a.router-link-exact-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  height: 0px;
+  width: 100%;
+  background: rgb(35, 39, 61);
+}
+
+.navbar-menu a.router-link-active.search-item{
+    color: #4293b9;
+}
 
 </style>
 

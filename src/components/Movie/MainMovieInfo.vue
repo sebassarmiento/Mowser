@@ -13,8 +13,8 @@
               </div>
               <p class="overview" >{{ movie.overview }}</p>
               <div class="buttons">
-                  <button class="add-wishlist" >Purchase</button>
-                  <button class="play-trailer" v-if="trailer" ><i class="far fa-play-circle"></i><span>Play trailer</span></button>
+                  <button class="add-wishlist" >Save</button>
+                  <button v-on:click="playVideos" class="play-trailer" v-if="trailer" ><i class="far fa-play-circle"></i><span>Play videos</span></button>
               </div>
           </div>
       </div>
@@ -26,6 +26,11 @@ export default {
     props: {
         movie: Object,
         trailer: Boolean
+    },
+    methods: {
+        playVideos(){
+            this.$parent.selectMenuOption('videos', true)
+        }
     }
 }
 </script>

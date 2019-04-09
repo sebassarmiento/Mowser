@@ -1,6 +1,13 @@
 <template>
     <div class="search" >
-        <p>Showing {{ movies.length }} of {{ total_results }} results for '<strong>{{ $route.query.query }}</strong>'</p>
+        <p v-if="movies.length > 0" >Showing {{ movies.length }} of {{ total_results }} results for '<strong>{{ $route.query.query }}</strong>'</p>
+        <div v-else class="search-text">
+            <i class="fas fa-search" ></i>
+            <p>Type something in the search bar above and press enter!</p>
+        </div>
+        <div v-if="loading" class="loading">
+            <Loader />
+        </div>
         <div v-if="movies" class="results">
             <div v-for="(m, i) in movies" class="movie" v-bind:key="i" v-on:click="redirect(m.id)" >
                 <img v-bind:src="m.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${m.backdrop_path}` : ImagePlaceholder" alt="">
@@ -11,6 +18,7 @@
         <div v-if="moreData" class="load-more">
             <button v-on:click="loadMore" >Load more</button>
         </div>
+        <Footer v-if="movies.length > 0" />
     </div>
 </template>
 
@@ -18,9 +26,15 @@
 import timeAgo from '@/utils/timeAgo.js'
 import { mapState, mapMutations } from 'vuex'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
+import Loader from '@/components/Loader.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
     name: 'Search',
+    components: {
+        Loader,
+        Footer
+    },
     data(){
         return {
             movies: [],
@@ -29,11 +43,13 @@ export default {
             moreData: true,
             total_results: 0,
             total_pages: 0,
-            query: ''
+            query: '',
+            loading: false
         }
     },
     methods: {
         getData(query){
+            this.loading = true
             fetch(`${this.api_url}/search/movie?api_key=${this.api_key}&query=${query}&page=${this.page}`)
             .then(d => d.json())
             .then(res => {
@@ -44,9 +60,11 @@ export default {
                 if(res.total_pages === this.page){
                     this.moreData = false
                 }
+                this.loading = false
             })
             .catch(err => {
                 console.log(err)
+                this.loading = false
             })
         },
         loadMore(){
@@ -87,6 +105,20 @@ export default {
     },
     computed: {
     ...mapState(['api_url', 'currentSearch', 'api_key'])
+    },
+    watch: {
+        '$route' (to, from){
+            console.log(to)
+            console.log(from)
+            if(to.query.query !== from.query.query){
+                this.movies = [],
+                this.page = 1,
+                this.moreData = true,
+                this.total_results = 0,
+                this.query = to.query.query
+                this.getData(this.query)
+            }
+        }
     }
 }
 </script>
@@ -96,6 +128,21 @@ export default {
 .search{
     min-height: calc(100vh - 60px);
     padding: 12px;
+}
+.search-text, .loading{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.search-text i{
+    font-size: 5em;
+    opacity: 0.4;
 }
 
 .search p:nth-child(1){

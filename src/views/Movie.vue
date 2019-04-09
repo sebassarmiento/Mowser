@@ -9,7 +9,7 @@
           </div>
           <div class="movie-column-1">
 
-          <MovieMenu v-if="cast" v-bind:counts="getCategoryCount()" />
+          <MovieMenu v-if="cast" v-bind:counts="getCategoryCount()" ref="movieMenu" />
 
           <div v-if="menu.cast && cast" class="cast">
               <h2 v-if="cast.length > 0" >Showing {{ castSlice > cast.length ? cast.length : castSlice }} of {{ cast.length }} <span v-if="castSlice <= cast.length" v-on:click="castSlice === 10 ? castSlice = cast.length : castSlice = 10" >{{ castSlice === 10 ? 'Show all' : 'Show less' }}</span></h2>
@@ -136,10 +136,14 @@ export default {
           }
       },
 
-      selectMenuOption(e){
+      selectMenuOption(e, o){
         for(let k in this.menu) this.menu[k] = false;
         this.menu = {...this.menu, [e]: true}
         console.log(this.menu)
+        if(o){
+            console.log(this.$refs)
+            this.$refs.movieMenu.select('videos')
+        }
       },
 
       redirect(id, type){

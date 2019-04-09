@@ -13,9 +13,8 @@ export default {
 <style scoped>
 
 footer{
-    height: 150px;
+    min-height: 100px;
     width: 100%;
-    background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(0, 0, 0));
     opacity: 0.8;
     text-align: center;
     position: relative;
@@ -28,14 +27,13 @@ footer p{
     left: 0;
     width: 100%;
     text-align: center;
-    color: white;
+    color: #333;
     font-family: 'Montserrat', sans-serif;
     font-size: 0.9em;
 }
 
 footer a{
     font-weight: bold;
-    color: rgb(255, 255, 255);
 }
 
 @keyframes showFooter{
