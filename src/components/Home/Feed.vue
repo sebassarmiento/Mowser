@@ -1,19 +1,24 @@
 <template>
   <div class="feed">
     <FeedCarousel v-if="carousel" v-bind:movies="carousel" />
-
-    <div class="feed-movies">
-      <div class="feed-column-1">
-      <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
+    <h1 class="title" >MOWSER</h1>
+    <div class="flex">
+      <div class="column">
+        <h2>Popular people</h2>
+        <div v-for="p in people" v-bind:key="p.id" class="person">
+          <img v-bind:src="`https://image.tmdb.org/t/p/w154/${p.profile_path}`" v-on:click="redirect(p.id)" alt="">
+        </div>
+      </div>
+      <div class="column-2">
+        <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
       <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="20" />
       <h1 v-if="top_rated" >Top Rated <span v-on:click="seeAll('top_rated')" >See all</span></h1>
       <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="20" />
       <h1 v-if="upcoming" >Upcoming <span v-on:click="seeAll('upcoming')" >See all</span></h1>
       <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="20" />
       </div>
-      <Preview />
     </div>
-
+    <Footer />
     <Loader v-if="!now_playing" />
   </div>
 </template>
@@ -27,6 +32,7 @@ import timeAgo from '@/utils/timeAgo.js'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
 import FeedGrid from '@/components/Home/FeedGrid.vue'
 import Preview from '@/components/Preview.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'Feed',
@@ -35,7 +41,8 @@ export default {
     Loader,
     Preview,
     ImagePlaceholder,
-    FeedGrid
+    FeedGrid,
+    Footer
   },
   data(){
     return {
@@ -44,6 +51,7 @@ export default {
       upcoming: null,
       url: null,
       carousel: null,
+      people: null,
       page: 1,
       ImagePlaceholder
     }
@@ -69,9 +77,11 @@ export default {
         this[category] = res.results
       })
       .catch(err => console.log)
+    },
+
+    redirect(id){
+      this.$router.push(`/people/id/${id}`)
     }
-
-
 
   },
   mounted(){
@@ -92,6 +102,8 @@ export default {
 
     this.getData(`${this.api_url}/movie/upcoming?api_key=${this.api_key}`, 'upcoming')
 
+    this.getData(`${this.api_url}/person/popular?api_key=${this.api_key}`, 'people')
+
   },
   computed: {
     ...mapState(['api_url', 'currentSearch', 'api_key'])
@@ -104,21 +116,68 @@ export default {
 
 .feed{
   width: 100%;
-  height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px);
   position: relative;
 }
 
-.feed-column-1{
-  display: inline-block;
-  max-width: calc(100vw - 260px);
+.title{
+  padding: 50px !important;
+  margin: 0px !important;
+  justify-content: center !important; 
+  background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);  
+  margin-bottom: 12px !important;
+  color: rgb(255, 255, 255);
+}
+
+.flex{
+  display: flex;
+}
+.column{
+  width: 300px;
+  height: calc(100vh - 60px);
+  position: sticky;
+  top: 60px;
+  left: 0px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-gap: 12px;
+  padding: 12px;
+  overflow: scroll;
+}
+.column-2{
+  max-width: calc(100vw - 300px);
+}
+.column h2{
+  grid-column: 1 / -1;
+  font-size: 1.2em;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 12px;
+  margin: 0px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.person{
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.person img{
+  height: 140%;
+  width: 100%;
+}
+.person:hover{
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  transform: translateY(-4px);
 }
 
 .feed h1{
   padding: 12px;
   font-weight: 500;
   margin: 0px;
-  margin-top: 24px;
   position: relative;
   display: flex;
   align-items: center;

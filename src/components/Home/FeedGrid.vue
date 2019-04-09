@@ -2,7 +2,7 @@
     <div class="container" >
       <div v-bind:ref="scroll" class="feed-grid">
       <div class="movie-preview" v-for="(movie, index) in limitMovies()" v-bind:key="index" >
-        <img v-on:click="loadPreview(index)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
+        <img v-on:click="redirect(index)" v-bind:src="movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}` : ImagePlaceholder" alt="">
         <h4>{{ movie.title }}</h4>
         <p>{{ movie.release_date ? timeAgo(movie.release_date) : null }}</p>
       </div>
@@ -16,7 +16,6 @@
 <script>
 import timeAgo from '@/utils/timeAgo.js'
 import ImagePlaceholder from '@/assets/MoviePlaceholder.png'
-import { mapMutations } from 'vuex'
 import handleScroll from '@/utils/handleScroll.js'
 
 export default {
@@ -32,16 +31,9 @@ export default {
         limit: Number
     },
     methods: {
-        ...mapMutations(['ADD_CURRENT_PREVIEW']),
-        loadPreview(i){
-        console.log('Adding to preview')
-        console.log(this.$route)
-        if(this.$route.name === 'feed'){
-          this.ADD_CURRENT_PREVIEW(this.movies[i])
-        } else {
+        redirect(i){
           window.scrollTo(0, 0)
           this.$router.push(`/movie/id/${this.movies[i].id}`)
-        }
         },
 
         timeAgo(date){
@@ -63,9 +55,6 @@ export default {
               handleScroll(this.$refs.scrollElement, dir)
         },
 
-    },
-    mounted(){
-      this.loadPreview(0)
     }
 }
 </script>

@@ -70,6 +70,7 @@ export default {
     },
     mounted(){
         console.log('Mounted')
+        window.scrollTo(0, 0)
         this.query = this.$route.query.query
         this.getData(this.query)
     },

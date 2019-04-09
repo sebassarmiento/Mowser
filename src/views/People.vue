@@ -82,8 +82,8 @@ export default {
             this.$router.push(`/${type}/id/${id}`)
         },
 
-        sortMovies(e){
-            let val = e.target.value
+        sortMovies(e, str){
+            let val = e ? e.target.value : str
             let timeStamp = date => new Date(date.split('-').map(d => parseFloat(d)).join('.')).getTime()
         
             switch(val){
@@ -128,6 +128,7 @@ export default {
             console.log('Credits' ,res)
             this.movies = res.cast
             console.log(this.movies.length)
+            this.sortMovies(null ,'new')
         })
         .catch(err => console.log(err))
 
