@@ -10,15 +10,15 @@
         </div>
       </div>
       <div class="column-2">
-        <h1 v-if="now_playing" >Now Playing <span v-on:click="seeAll('now_playing')" >See all</span></h1>
+        <h1 v-if="now_playing" >Now Playing</h1>
       <FeedGrid v-if="now_playing" v-bind:movies="now_playing" v-bind:limit="20" />
-      <h1 v-if="top_rated" >Top Rated <span v-on:click="seeAll('top_rated')" >See all</span></h1>
+      <h1 v-if="top_rated" >Top Rated</h1>
       <FeedGrid v-if="top_rated" v-bind:movies="top_rated" v-bind:limit="20" />
-      <h1 v-if="upcoming" >Upcoming <span v-on:click="seeAll('upcoming')" >See all</span></h1>
+      <h1 v-if="upcoming" >Upcoming</h1>
       <FeedGrid v-if="upcoming" v-bind:movies="upcoming" v-bind:limit="20" />
+      <Footer />
       </div>
     </div>
-    <Footer />
     <Loader v-if="!now_playing" />
   </div>
 </template>

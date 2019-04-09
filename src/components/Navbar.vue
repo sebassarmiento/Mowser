@@ -1,6 +1,6 @@
 <template>
     <div id="nav">
-      <router-link class="brand" to="/" ><i class="fas fa-film"></i>Mowser</router-link>
+      <router-link class="brand" to="/" ><img src="../assets/logo.png" alt=""> Mowser</router-link>
       <div class="navbar-search">
           <i class="fas fa-search"></i>
           <input placeholder="Search" type="text" v-model="query" v-on:keydown="handleSearch" >
@@ -57,9 +57,9 @@ export default {
     position: relative;
     font-weight: bold;
 }
-.brand i{
-    padding: 12px;
-    font-size: 2em;
+.brand img{
+    height: 100%;
+    margin-right: 12px;
 }
 
 /* Navbar Search */
